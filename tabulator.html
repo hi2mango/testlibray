@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tabulator 전체선택 체크박스 (기본 + CSS 커스텀)</title>
+  <title>Tabulator rowSelection + CSS checkbox</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.0/dist/css/tabulator.min.css">
   <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
 
   <style>
     :root{
-      --line: #d8dbe3;
-      --subLine: #eceff6;
-      --headBg: #f3f5f9;
-      --stripe: #f7f8fb;
-      --selected: #f4e2d9;
-      --accent: #ff8a00;
-      --topbar: #2b73ff;
-      --chkBorder: #cfd6e4;
-      --text: #1f2430;
+      --line:#d8dbe3;
+      --subLine:#eceff6;
+      --headBg:#f3f5f9;
+      --stripe:#f7f8fb;
+      --selected:#f4e2d9;
+      --accent:#ff8a00;
+      --topbar:#2b73ff;
+      --chkBorder:#cfd6e4;
+      --text:#1f2430;
     }
 
     body{
@@ -29,90 +29,73 @@
     }
 
     .grid-wrap{
-      width: 820px;
+      width:820px;
       border:1px solid var(--line);
       border-top:3px solid var(--topbar);
       background:#fff;
       overflow:hidden;
     }
 
-    /* Tabulator 바깥 테두리 제거 (wrap에서 관리) */
-    .tabulator{
-      border:none;
-      background:transparent;
-    }
+    /* wrap에서 테두리 관리하니 tabulator 기본 테두리 제거 */
+    .tabulator{ border:none; }
 
-    /* 헤더 스타일 */
+    /* 헤더 */
     .tabulator .tabulator-header{
       background:var(--headBg);
       border-bottom:1px solid var(--line);
     }
 
-    /* 헤더/셀 세로정렬 안정화 */
-    .tabulator .tabulator-col,
-    .tabulator .tabulator-cell{
-      display:flex;
-      align-items:center;
-      box-sizing:border-box;
+    /* 행/셀 라인 */
+    .tabulator .tabulator-row{
+      border-bottom:1px solid var(--subLine);
     }
-
-    /* 셀 기본 라인 */
     .tabulator .tabulator-cell{
       border-right:1px solid var(--subLine);
-      background:transparent;
-    }
-    .tabulator .tabulator-row .tabulator-cell:last-child{
-      border-right:none;
-    }
-
-    /* 행 높이: 고정 height 대신 min-height로 틀어짐 방지 */
-    .tabulator .tabulator-row{
-      min-height:48px;
-      border-bottom:1px solid var(--subLine);
-      background:#fff;
-    }
-
-    /* 줄무늬 */
-    .tabulator .tabulator-row:nth-child(even){
-      background:var(--stripe);
-    }
-
-    /* 선택 배경 */
-    .tabulator .tabulator-row.tabulator-selected{
-      background:var(--selected) !important;
-    }
-
-    /* 텍스트 컬럼 padding/ellipsis */
-    .tabulator .tabulator-cell{
-      padding: 0 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       font-size:16px;
+      padding: 0 14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      background:transparent;
+      vertical-align: middle; /* 기본 테이블 정렬 유지 */
     }
+    .tabulator .tabulator-row .tabulator-cell:last-child{ border-right:none; }
+
+    /* 줄무늬/선택 */
+    .tabulator .tabulator-row:nth-child(even){ background:var(--stripe); }
+    .tabulator .tabulator-row.tabulator-selected{ background:var(--selected) !important; }
 
     /* No / 구분 가운데 정렬 */
     .tabulator .tabulator-cell[tabulator-field="no"],
     .tabulator .tabulator-cell[tabulator-field="type"]{
-      justify-content:center;
+      text-align:center;
+      justify-content:center; /* 일부 브라우저에서 영향 없고, 있어도 문제 없음 */
       font-weight:600;
     }
 
-    /* 체크박스 컬럼(rowSelection) 가운데 정렬 (헤더 + 바디) */
+    /* ✅ 체크박스 컬럼만 가운데 정렬 (여기만 flex 사용) */
     .tabulator .tabulator-col[tabulator-field="_rowSelect"],
     .tabulator .tabulator-cell[tabulator-field="_rowSelect"]{
+      padding:0 !important;
+      text-align:center;
+    }
+    /* 셀 안에 체크박스 중앙 정렬 */
+    .tabulator .tabulator-cell[tabulator-field="_rowSelect"]{
+      display:flex;
+      align-items:center;
       justify-content:center;
-      padding:0;                 /* 체크박스 컬럼은 padding 제거 */
+    }
+    /* 헤더도 체크박스만 중앙 정렬 */
+    .tabulator .tabulator-col[tabulator-field="_rowSelect"] .tabulator-col-content{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100%;
     }
 
     /* ================================
-       체크박스 커스텀 (rowSelection)
-       - 틀(프레임)은 항상 보임
-       - ROW는 체크하면 ✔ 표시
-       - HEADER는 "전체선택일 때만" ✔ 표시
+       체크박스 커스텀 (틀은 항상)
     ================================ */
-
-    /* 공통 체크박스 프레임 */
     .tabulator input[type="checkbox"]{
       appearance:none;
       -webkit-appearance:none;
@@ -124,7 +107,6 @@
       cursor:pointer;
       position:relative;
       box-sizing:border-box;
-      flex:0 0 auto;
     }
 
     /* ROW 체크 표시 */
@@ -140,16 +122,14 @@
       transform:rotate(45deg);
     }
 
-    /* HEADER: 부분선택(indeterminate)일 때 아이콘 금지 */
+    /* HEADER: indeterminate(부분선택)일 때 아이콘 금지 */
     .tabulator .tabulator-header input[type="checkbox"]:indeterminate::after{
       display:none;
     }
-
     /* HEADER: 체크 안 됐으면 아이콘 없음 */
     .tabulator .tabulator-header input[type="checkbox"]:not(:checked)::after{
       display:none;
     }
-
     /* HEADER: 전체선택(checked)일 때만 ✔ 표시 */
     .tabulator .tabulator-header input[type="checkbox"]:checked::after{
       content:"";
@@ -179,7 +159,7 @@
       { id: 5, no: 5, title: "자필서명", type: "바코드" },
     ];
 
-    const table = new Tabulator("#doc-grid", {
+    new Tabulator("#doc-grid", {
       data: tableData,
       index: "id",
       layout: "fitColumns",
@@ -196,31 +176,11 @@
           headerSort: false,
           width: 52,
         },
-        {
-          title: "No",
-          field: "no",
-          width: 60,
-          hozAlign: "center",
-          headerSort: false,
-        },
-        {
-          title: "문서명",
-          field: "title",
-          widthGrow: 1,
-          headerSort: false,
-        },
-        {
-          title: "구분",
-          field: "type",
-          width: 140,
-          hozAlign: "center",
-          headerSort: false,
-        },
+        { title: "No", field: "no", width: 60, hozAlign: "center", headerSort: false },
+        { title: "문서명", field: "title", widthGrow: 1, headerSort: false },
+        { title: "구분", field: "type", width: 140, hozAlign: "center", headerSort: false },
       ],
     });
-
-    // (테스트용) 선택 데이터 확인
-    // console.log(table.getSelectedData());
   </script>
 </body>
 </html>

@@ -41,6 +41,21 @@ const treeData = [
 // -------------------------------
 const $tree = $("#tree");
 
+/**
+ * 
+ * core.data: 트리에 뿌릴 데이터
+
+multiple:false: 한 번에 하나만 선택
+
+themes.dots/icons:false: 점선/아이콘 제거(깔끔한 UI)
+
+plugins:["wholerow"]: 한 줄 전체 클릭 영역 확장
+
+dblclick_toggle:false: 더블클릭으로 열고닫기 막음 (우리가 클릭을 커스텀하니까)
+
+ */
+
+
 $tree.jstree({
     core: {
         data: treeData,
