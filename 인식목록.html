@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>인식목록 Grid (Fixed v2 - jQuery 3.7.1)</title>
+
+        <!-- jQuery 3.7.1 -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.0/dist/css/tabulator.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+
+        <style>
+            :root {
+                --line: #e6e6e6;
+                --head: #f3f3f3;
+                --warn: #d23b3b;
+                --accent: #ff8a00;
+                --parentBg: #fff7ef;
+            }
+
+            body {
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    Segoe UI,
+                    Roboto,
+                    "Noto Sans KR",
+                    sans-serif;
+                background: #fff;
+                padding: 18px;
+            }
+            .wrap {
+                width: 520px;
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                overflow: hidden;
+            }
+            .title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 700;
+                padding: 10px 12px;
+                border-bottom: 1px solid var(--line);
+            }
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--accent);
+                display: inline-block;
+            }
+
+            /* Tabulator base */
+            .tabulator {
+                border: none;
+            }
+            .tabulator .tabulator-header {
+                background: var(--head);
+                border-bottom: 1px solid var(--line);
+            }
+            .tabulator .tabulator-header .tabulator-col {
+                border-right: 1px solid var(--line);
+            }
+            .tabulator .tabulator-row {
+                border-bottom: 1px solid var(--line);
+            }
+            .tabulator .tabulator-cell {
+                border-right: 1px solid var(--line);
+            }
+            .tabulator .tabulator-col-sorter {
+                display: none !important;
+            }
+
+            /* parent row bg */
+            .row-parent .tabulator-cell {
+                background: var(--parentBg);
+            }
+            .row-parent.missing .tabulator-cell {
+                background: #fff;
+            }
+
+            /* detail holder */
+            .row-parent.tabulator-row {
+                flex-wrap: wrap;
+            }
+            .detail-holder {
+                flex-basis: 100%;
+                width: 100%;
+                background: #fff;
+                border-top: 1px solid var(--line);
+                padding: 0 0 6px 0;
+                display: none;
+            }
+
+            /* parent title cell content */
+            .parent-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 0;
+            }
+            .chev {
+                width: 16px;
+                height: 16px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                user-select: none;
+            }
+            .chev::before {
+                content: "▸";
+                font-size: 12px;
+                transition: transform 0.15s ease;
+                transform-origin: center;
+            }
+            .is-open .chev::before {
+                transform: rotate(90deg);
+            }
+            .ellipsis {
+                flex: 1;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .missing-text {
+                color: var(--warn);
+                font-weight: 700;
+            }
+
+            /* child (custom HTML grid) */
+            .child-table {
+                padding: 6px 0 0 0;
+            }
+
+            .child-grid {
+                display: grid;
+                grid-template-columns: 90px 1fr 110px;
+                border-top: 1px solid var(--line);
+                border-bottom: 1px solid var(--line);
+            }
+
+            .child-cell {
+                border-right: 1px solid var(--line);
+                border-bottom: 1px solid var(--line);
+                min-height: 38px;
+                display: flex;
+                align-items: center;
+                background: #fff;
+            }
+
+            /* 마지막 컬럼 오른쪽 테두리 제거 */
+            .child-grid .child-cell:nth-child(3n) {
+                border-right: none;
+            }
+            /* 마지막 행 bottom 제거 */
+            .child-grid .child-cell.last-row {
+                border-bottom: none;
+            }
+
+            .cell-pad {
+                padding: 0 10px;
+                width: 100%;
+            }
+
+            .all-cell {
+                /* ALL이 두 행 병합된 것처럼 보이게 */
+                align-items: center;
+                justify-content: flex-start;
+                gap: 8px;
+            }
+
+            .center {
+                justify-content: center;
+            }
+
+            input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                accent-color: var(--accent);
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="wrap">
+            <div class="title"><span class="dot"></span> 인식목록</div>
+            <div id="grid"></div>
+        </div>
+
+        <script>
+            const rows = [
+                {
+                    id: 1,
+                    title: "1. 개인(신용 정보)의 수집 이용에 관한…",
+                    statusText: "",
+                    statusType: "normal",
+                    _open: true,
+                    children: [
+                        { id: "1-1", label: "미동의", agreed: false },
+                        { id: "1-2", label: "동의", agreed: true },
+                    ],
+                },
+                {
+                    id: 2,
+                    title: "2. 개인(신용)정보의 제공에 관한 사항",
+                    statusText: "",
+                    statusType: "normal",
+                    _open: false,
+                    children: [
+                        { id: "2-1", label: "미동의", agreed: false },
+                        { id: "2-2", label: "동의", agreed: false },
+                    ],
+                },
+                {
+                    id: 3,
+                    title: "3. 계약자 - 성명/서명",
+                    statusText: "누락",
+                    statusType: "missing",
+                    _open: true,
+                    children: [
+                        { id: "3-1", label: "계약자 성명", agreed: false },
+                        { id: "3-2", label: "계약자 서명", agreed: false },
+                    ],
+                },
+            ];
+
+            function nextFrame(fn) {
+                requestAnimationFrame(() => requestAnimationFrame(fn));
+            }
+
+            function isAllChecked(parentData) {
+                return parentData.children.every((x) => x.agreed);
+            }
+
+            function ensureHolder(row) {
+                const $el = $(row.getElement());
+                let $holder = $el.find("> .detail-holder");
+                if ($holder.length === 0) {
+                    $holder = $('<div class="detail-holder"></div>');
+                    $el.append($holder);
+                }
+                row._detailHolder = $holder[0];
+                return $holder;
+            }
+            function renderChild(holderEl, parentRow) {
+                const parentData = parentRow.getData();
+                const $holder = $(holderEl);
+                $holder.empty();
+
+                const allChecked = isAllChecked(parentData);
+                const $wrap = $('<div class="child-table"></div>');
+                const $grid = $('<div class="child-grid"></div>');
+
+                // 공통 row 생성 함수
+                function makeRow(label, checked, role, id) {
+                    const $label = $('<div class="child-cell"></div>').append($('<div class="cell-pad"></div>').text(label));
+
+                    const $check = $('<div class="child-cell center"></div>').append(
+                        $('<input type="checkbox">')
+                            .attr("data-role", role)
+                            .attr("data-id", id || "")
+                            .prop("checked", checked),
+                    );
+
+                    // 첫 컬럼(구분용 빈칸)
+                    const $blank = $('<div class="child-cell"></div>');
+                    return [$blank, $label, $check];
+                }
+
+                // ALL
+                $grid.append(...makeRow("ALL", allChecked, "all"));
+
+                // children
+                parentData.children.forEach((c) => {
+                    $grid.append(...makeRow(c.label, c.agreed, "item", c.id));
+                });
+
+                $wrap.append($grid);
+                $holder.append($wrap);
+
+                // 이벤트
+                $holder
+                    .off("change.child")
+                    .on("change.child", 'input[data-role="all"]', function () {
+                        parentData.children.forEach((x) => (x.agreed = this.checked));
+                        renderChild(holderEl, parentRow);
+                    })
+                    .on("change.child", 'input[data-role="item"]', function () {
+                        const id = $(this).data("id");
+                        const item = parentData.children.find((x) => x.id === id);
+                        if (item) item.agreed = this.checked;
+                        renderChild(holderEl, parentRow);
+                    });
+            }
+
+            const grid = new Tabulator("#grid", {
+                data: rows,
+                layout: "fitColumns",
+                height: 420,
+                selectable: false,
+                columnDefaults: { resizable: false, headerSort: false },
+                columns: [
+                    {
+                        title: "필드명",
+                        field: "title",
+                        formatter: (cell) => {
+                            const d = cell.getRow().getData();
+                            return `
+                <div class="parent-title ${d._open ? "is-open" : ""}">
+                  <span class="chev" aria-hidden="true"></span>
+                  <span class="ellipsis">${d.title}</span>
+                </div>
+              `;
+                        },
+
+                        // ✅ 여기서 진짜 토글(열기/닫기)
+                        cellClick: (e, cell) => {
+                            const row = cell.getRow();
+                            const d = row.getData();
+                            const nextOpen = !d._open;
+
+                            row.update({ _open: nextOpen });
+
+                            nextFrame(() => {
+                                const $holder = ensureHolder(row);
+
+                                $holder.css("display", nextOpen ? "block" : "none");
+                                if (nextOpen) {
+                                    renderChild($holder[0], row);
+                                }
+
+                                row.normalizeHeight();
+                                row.reformat();
+                            });
+                        },
+                    },
+                    {
+                        title: "검증결과",
+                        field: "statusText",
+                        width: 110,
+                        hozAlign: "center",
+                        formatter: (cell) => {
+                            const d = cell.getRow().getData();
+                            return d.statusType === "missing" ? `<span class="missing-text">${d.statusText}</span>` : "";
+                        },
+                    },
+                ],
+
+                rowFormatter: (row) => {
+                    const d = row.getData();
+                    const $el = $(row.getElement());
+
+                    $el.addClass("row-parent");
+                    if (d.statusType === "missing") $el.addClass("missing");
+
+                    const $holder = ensureHolder(row);
+
+                    $holder.css("display", d._open ? "block" : "none");
+                    if (d._open) {
+                        renderChild($holder[0], row);
+                    }
+                },
+
+                tableBuilt: function () {
+                    const table = this;
+                    nextFrame(() => {
+                        table.getRows().forEach((row) => {
+                            row.normalizeHeight();
+                            row.reformat();
+                        });
+                    });
+                },
+            });
+        </script>
+    </body>
+</html>

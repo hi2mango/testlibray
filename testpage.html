@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>이미지 교정 - 문서 뷰어</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/themes/default/style.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.0/dist/css/tabulator.min.css" />
+        <link rel="stylesheet" href="./correct.css" />
+
+        <!-- jQuery 3.7.1 -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+        <!-- jsTree -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstree.min.js"></script>
+
+        <!-- Tabulator -->
+        <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+
+        <script src="./recog_box.js"></script>
+    </head>
+    <body>
+        <div class="app">
+            <div class="container">
+                <div class="toggle-wrap">
+                    <label class="toggle">
+                        <span class="toggle-label">주석 보기</span>
+                        <input type="checkbox" id="commentToggle" checked />
+                        <span class="toggle-slider"></span>
+                    </label>
+
+                    <label class="toggle">
+                        <span class="toggle-label">마스킹 보기</span>
+                        <input type="checkbox" id="maskToggle" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- 좌측 뷰어 -->
+                <div class="viewer-section"></div>
+
+                <!-- 우측 데이터 -->
+                <div class="biz-section">
+                    <!-- 상단 테이블 -->
+
+                    <div class="table-section">
+                        <div class="tabs">
+                            <button class="tab active">건정보 관리</button>
+                            <button class="tab">탭2</button>
+                        </div>
+
+                        <!-- Tabulator -->
+                        <div class="table-container">
+                            <div id="myGrid" style="height: 100%; width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 하단 3개 패널 -->
+                    <div class="bottom-section">
+                        <!-- 좌측  -->
+                        <section>
+                            <div class="panel" style="width: 280px">
+                                <div class="panel-header">건 정보 관리</div>
+                                <div class="panel-content">
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <select style="flex: 1">
+                                                <option>업무유형</option>
+                                            </select>
+                                            <select style="flex: 1">
+                                                <option>개인신청</option>
+                                            </select>
+                                        </div>
+                                        <select style="width: 100%; margin-top: 8px">
+                                            <option>보험계약(KF1AS52)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <select style="width: 100%; margin-bottom: 8px">
+                                            <option>조직(신작업대상)</option>
+                                        </select>
+                                        <div style="display: flex; gap: 8px">
+                                            <input type="text" placeholder="그룹" style="width: 150px" />
+                                            <button class="btn">찾기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel recog-wrap" style="margin-top: 20px">
+                                <div class="title"><span class="dot"></span> 인식목록</div>
+                                <div id="recogGrid"></div>
+                            </div>
+                        </section>
+
+                        <!-- 중간 패널 - 이미지 목록 -->
+                        <div class="panel" style="flex: 1">
+                            <div class="panel-header">이미지 목록</div>
+                            <div class="panel-content">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px">
+                                    <div style="display: flex; gap: 8px">
+                                        <label><input type="checkbox" /> 대표</label>
+                                        <label><input type="checkbox" /> 비트맵 처리 제외</label>
+                                    </div>
+                                    <button class="btn">미리보기 자동 팝업</button>
+                                </div>
+
+                                <div class="search-bar">
+                                    <input type="text" class="search-input" placeholder="대표" />
+                                    <button class="btn">검색</button>
+                                    <button class="btn">초기화 포인트</button>
+                                </div>
+
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" class="checkbox" /></th>
+                                                <th>No</th>
+                                                <th>파일명</th>
+                                                <th>유형</th>
+                                                <th>비고</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input type="checkbox" class="checkbox" /></td>
+                                                <td>1</td>
+                                                <td>동의(신용)정보 청약</td>
+                                                <td>비근로</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="checkbox" class="checkbox" /></td>
+                                                <td>2</td>
+                                                <td>산재병원 증명서_202507</td>
+                                                <td>비근로</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr class="selected">
+                                                <td><input type="checkbox" class="checkbox" checked /></td>
+                                                <td>3</td>
+                                                <td>산재병원 증명서_202507</td>
+                                                <td>비근로</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="checkbox" class="checkbox" /></td>
+                                                <td>4</td>
+                                                <td>개인(신용)정보확인서</td>
+                                                <td>비근로</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="checkbox" class="checkbox" /></td>
+                                                <td>5</td>
+                                                <td>개인(신용)정보확인서</td>
+                                                <td>비근로</td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="mini-toolbar">
+                                    <button class="icon-btn-small">⇅</button>
+                                    <button class="icon-btn-small">편집</button>
+                                    <button class="icon-btn-small">+</button>
+                                    <button class="icon-btn-small">-</button>
+                                    <button class="icon-btn-small">↓</button>
+                                    <button class="icon-btn-small">↑</button>
+                                    <button class="icon-btn-small">조각미리 적용</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 우측 패널 - 문서목록 -->
+                        <div class="panel" style="width: 360px">
+                            <div class="panel-header">
+                                <span>문서목록</span>
+                                <div style="flex: 1"></div>
+                                <label><input type="checkbox" /> 문서 첨부/삭제 제외</label>
+                            </div>
+                            <div class="panel-content">
+                                <div class="search-bar">
+                                    <input type="text" class="search-input" placeholder="입력" />
+                                    <button class="btn">검색</button>
+                                    <button class="btn">초기화 포인트</button>
+                                </div>
+
+                                <ul class="doc-tree">
+                                    <li class="doc-tree-item">
+                                        <button class="toggle-btn">▼</button>
+                                        <span>청약서류</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1C8 보험계약 청약서(단체)_202404</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1C7 보험계약 청약서(부활)_202404</span>
+                                    </li>
+                                    <li class="doc-tree-item selected">
+                                        <button class="toggle-btn">▼</button>
+                                        <span style="color: #ff6b35">계약서류</span>
+                                    </li>
+                                    <li class="doc-tree-item">
+                                        <button class="toggle-btn">▶</button>
+                                        <span>공통서류</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1F8 신분증</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1G0 주민등록증</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1G0 사업자등록증</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1D8 인감증명서</span>
+                                    </li>
+                                    <li class="doc-tree-item" style="padding-left: 20px">
+                                        <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                        <span>N1E8 통장사본</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(function () {
+                // ---------------------------
+                // 토글
+                // ---------------------------
+                $("#commentToggle").on("change", function () {
+                    const isOn = $(this).is(":checked");
+
+                    if (isOn) {
+                        console.log("주석 보기 ON");
+                        // 주석 표시 로직
+                    } else {
+                        console.log("주석 보기 OFF");
+                        // 주석 숨김 로직
+                    }
+                });
+
+                // ---------------------------
+                // 탭 스위칭
+                // ---------------------------
+                $(".tabs").on("click", ".tab", function () {
+                    $(".tabs .tab").removeClass("active");
+                    $(this).addClass("active");
+                });
+
+                // ---------------------------
+                // Tabulator: 건정보 관리
+                // ---------------------------
+                const mainRows = [
+                    { No: "1", 등록일시: "2025.11.10 11:22:33", 등록구분: "ATT", 페이지수: "1", 건조회: "확인", 문서미분류: "없음", 업무구분: "개인신계약", 청약서번호: "20251218001" },
+                    { No: "2", 등록일시: "2025.11.10 09:16:21", 등록구분: "ATT", 페이지수: "11", 건조회: "미확인", 문서미분류: "7개", 업무구분: "개인신계약", 청약서번호: "2025121801" },
+                    { No: "3", 등록일시: "2025.11.10 00:00:00", 등록구분: "SCN", 페이지수: "5", 건조회: "미확인", 문서미분류: "없음", 업무구분: "개인신계약", 청약서번호: "25080000156" },
+                ];
+
+                const mainTable = new Tabulator("#myGrid", {
+                    data: mainRows,
+                    layout: "fitColumns",
+                    height: "100%",
+                    width: "100%",
+                    selectable: true, // 다중 선택
+                    selectableRangeMode: "click", // 클릭 시부터 드래그로 다중 선택
+                    columnDefaults: { resizable: true, headerSort: false },
+                    //headerSort false → 헤더 클릭해도 정렬 안 됨
+                    columns: [
+                        {
+                            // title: "",
+                            // field: "__sel__",
+                            width: 50,
+                            hozAlign: "center",
+                            headerHozAlign: "center",
+                            headerSort: false,
+                            frozen: true,
+                            formatter: "rowSelection", //formatter → 각 행 체크박스
+                            titleFormatter: "rowSelection", //titleFormatter → 헤더 전체 선택 체크박스
+                            titleFormatterParams: { rowRange: "active" },
+
+                            cellClick: function (e, cell) {
+                                e.stopPropagation();
+                                cell.getRow().toggleSelect();
+                                const row = cell.getRow(); // RowComponent
+                                const data = row.getData(); // 해당 row 데이터
+                                const value = cell.getValue(); // 해당 cell 값
+                            },
+                        },
+
+                        { title: "No", field: "No", hozAlign: "center" },
+                        { title: "등록일시", field: "등록일시", minWidth: 150, hozAlign: "center" },
+                        { title: "등록구분", field: "등록구분", hozAlign: "center" },
+                        { title: "페이지 수", field: "페이지수", hozAlign: "center" },
+                        { title: "건 조회", field: "건조회", hozAlign: "center" },
+                        { title: "문서미분류", field: "문서미분류", hozAlign: "center" },
+                        { title: "업무구분", field: "업무구분", hozAlign: "center" },
+                        { title: "청약서번호", field: "청약서번호", hozAlign: "center" },
+                    ],
+                    rowFormatter: function (row) {
+                        const index = row.getPosition(true); // 실제 순서 기준
+                        if (index % 2 === 1) {
+                            row.getElement().classList.add("row-odd");
+                        }
+                    },
+                });
+                mainTable.on("cellClick", function (e, cell) {
+                    const row = cell.getRow();
+                    const data = row.getData();
+                    console.log("셀정보: ", row, data);
+                });
+
+                //subscribe to event
+                mainTable.on("dataLoaded", function (data) {
+                    console.log("data: ", data);
+                    //data has been loaded
+                });
+                mainTable.on("rowClick", function (e, row) {
+                    const test = row.getData();
+                    console.log("test: ", test);
+                    //e - the click event object
+                    //row - row component
+                });
+                mainTable.on("rowSelected", function (row) {
+                    const data = row.getData();
+                    // checked 됐을 때만
+                    console.log("checked: ", data);
+                });
+                mainTable.on("rowSelectionChanged", function (data, rows) {
+                    const selectedCount = rows.length;
+                    const totalCount = mainTable.getDataCount("active"); // 필터/검색 반영된 현재 표시 row 기준
+
+                    if (totalCount > 0 && selectedCount === totalCount) {
+                        //  전체 선택 됐을 때만
+                        alert("전체선택");
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

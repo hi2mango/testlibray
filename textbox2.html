@@ -1,0 +1,99 @@
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script> -->
+
+<link rel="stylesheet" href="./choices.min.css" />
+<script src="./choices.min.js"></script>
+
+<div class="field">
+    <label>box</label>
+    <select id="sel-choices"></select>
+</div>
+
+<style>
+    :root {
+        --radius: 12px;
+        --line: #d9dee7;
+        --text: #1f2430;
+        --muted: #6b7280;
+        --accent: #ff8a00;
+        --hoverBg: #f6f7fb;
+    }
+
+    .field {
+        width: 280px;
+    }
+    .field label {
+        display: block;
+        margin: 6px 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    /* 컨트롤 */
+    .choices__inner {
+        border-radius: var(--radius) !important;
+        border: 1px solid var(--line) !important;
+        min-height: 44px !important;
+        padding: 6px 10px !important;
+        background: #fff !important;
+    }
+
+    /* active (열렸거나 포커스) */
+    .choices.is-open .choices__inner,
+    .choices.is-focused .choices__inner {
+        border-color: var(--accent) !important;
+    }
+
+    /* 드롭다운 떠 보이게 + radius */
+    .choices__list--dropdown {
+        border-radius: var(--radius) !important;
+        border: 1px solid var(--line) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+        margin-top: 8px !important;
+        overflow: hidden;
+    }
+
+    /* 옵션 hover */
+    .choices__list--dropdown .choices__item--selectable {
+        padding: 10px 12px !important;
+    }
+    .choices__list--dropdown .choices__item--selectable.is-highlighted {
+        background: var(--hoverBg) !important;
+        color: var(--text) !important;
+    }
+
+    /* 선택된 항목 색 */
+    .choices__item--selectable[aria-selected="true"] {
+        color: var(--accent) !important;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    async function fetchOptions() {
+        await new Promise((r) => setTimeout(r, 200));
+        return [
+            { value: "loveage", label: "LoveAge" },
+            { value: "alpha", label: "Alpha" },
+            { value: "beta", label: "Beta" },
+        ];
+    }
+
+    (async () => {
+        const el = document.querySelector("#sel-choices");
+        (await fetchOptions()).forEach((o) => {
+            const opt = document.createElement("option");
+            opt.value = o.value;
+            opt.textContent = o.label;
+            el.appendChild(opt);
+        });
+
+        const choices = new Choices(el, {
+            searchEnabled: false,
+            shouldSort: false,
+            itemSelectText: "",
+        });
+
+        choices.setChoiceByValue("loveage");
+    })();
+</script>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Insurance Tree (jsTree)</title>
+
+        <link rel="stylesheet" href="./dist/themes/default/style.min.css" />
+        <script src="./npm/jquery@3.7.1/dist/jquery.min.js"></script>
+        <script src="./npm/jstree@3.3.12/dist/jstree.min.js"></script>
+
+        <style>
+            :root {
+                --accent: #f07f2a;
+                --accent-soft: #fde6d7;
+                --text: #222;
+                --muted: #666;
+                --row-h: 38px;
+                --indent: 22px;
+            }
+
+            body {
+                font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+                margin: 24px;
+                color: var(--text);
+            }
+
+            .tree-wrap {
+                width: 520px;
+                border-top: 3px solid var(--accent);
+                padding-top: 10px;
+            }
+
+            /* ===== jsTree 기본 요소 정리 ===== */
+            #tree.jstree-default .jstree-icon {
+                display: none !important;
+            }
+            #tree.jstree-default .jstree-node {
+                margin-left: 0;
+                min-height: var(--row-h);
+                line-height: var(--row-h);
+                background-image: none !important;
+            }
+
+            #tree.jstree-default .jstree-anchor {
+                height: var(--row-h);
+                line-height: var(--row-h);
+                padding: 0 10px 0 6px;
+                border-radius: 6px;
+                width: calc(100% - 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            /* depth 들여쓰기 */
+            #tree.jstree-default .jstree-children .jstree-node {
+                margin-left: var(--indent);
+            }
+
+            /* 기본 토글(ocl)은 자리만 남기고 숨김 (정렬용) */
+            #tree.jstree-default .jstree-ocl {
+                width: 18px;
+                height: var(--row-h);
+                background: none !important;
+            }
+
+            #tree.jstree-default .jstree-anchor:hover {
+                background: #fff3ec;
+            }
+
+            #tree.jstree-default .jstree-clicked {
+                background: var(--accent-soft) !important;
+                color: var(--accent) !important;
+                box-shadow: none !important;
+            }
+
+            .count {
+                color: var(--muted);
+                margin-left: 2px;
+                font-weight: 600;
+            }
+            #tree .jstree-clicked .count {
+                color: var(--accent);
+            }
+
+            /* ===== 커스텀 화살표 아이콘 (1~2 depth에만) ===== */
+            .twisty {
+                width: 18px;
+                height: 18px;
+                display: inline-grid;
+                place-items: center;
+                flex: 0 0 18px;
+                margin-left: -2px; /* 살짝 당겨서 스샷 느낌 */
+            }
+
+            /* 삼각형(▶)을 CSS로 */
+            .twisty::before {
+                content: "";
+                display: block;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 6px 0 6px 8px;
+                border-color: transparent transparent transparent var(--muted);
+                transform: rotate(0deg);
+                transform-origin: 40% 50%;
+                transition: transform 180ms ease;
+            }
+
+            /* 열림 상태: 아래로(▼)처럼 보이게 회전 */
+            .twisty.is-open::before {
+                transform: rotate(90deg);
+            }
+
+            /* leaf(자식 없음)에는 화살표 대신 빈 공간만 */
+            .twisty.is-leaf::before {
+                border-color: transparent;
+            }
+
+            /* 텍스트 래퍼(화살표 + 라벨 분리) */
+            .label {
+                display: inline-flex;
+                align-items: center;
+                min-width: 0; /* ellipsis 위해 */
+                gap: 0;
+            }
+            .label .text {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            /* 포커스 */
+            #tree.jstree-default .jstree-anchor:focus {
+                outline: 2px solid rgba(240, 127, 42, 0.35);
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="tree-wrap">
+            <div id="tree"></div>
+        </div>
+
+        <script>
+            // 처음엔 "전부 접힘" 상태로 만들기: state.opened를 주지 않거나 false로
+            const treeData = [
+                {
+                    id: "c1",
+                    text: "청약서발행번호(25120000496)",
+                    children: [
+                        {
+                            id: "c1-1",
+                            text: "보험차익 과세 확인서<span class='count'>(1)</span>",
+                            children: [
+                                { id: "c1-1-1", text: "보험차액 과세 확인서" },
+                                { id: "c1-1-2", text: "보험금 청구서<span class='count'>(12)</span>" },
+                            ],
+                        },
+                        {
+                            id: "c1-2",
+                            text: "보험계약 해지 신청서",
+                            children: [
+                                {
+                                    id: "c1-2-1",
+                                    text: "보험료 납부 확인서<span class='count'>(2)</span>",
+                                    children: [
+                                        { id: "c1-2-1-1", text: "보험금 지급 명세서" },
+                                        { id: "c1-2-1-2", text: "보험금 지급 명세서" },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            const $tree = $("#tree");
+
+            $tree.jstree({
+                core: {
+                    data: treeData,
+                    multiple: false,
+                    themes: { dots: false, icons: false },
+                    expand_selected_onload: false,
+                    animation: 150,
+                },
+                plugins: ["wholerow"],
+                // 더블클릭 토글 끄고 우리가 단일 클릭으로 제어
+                dblclick_toggle: false,
+            });
+
+            function getDepthFromLi(liEl) {
+                // depth 계산: 최상위 li는 depth 1
+                let d = 1;
+                let p = liEl.parentElement;
+                while (p && p.classList) {
+                    if (p.classList.contains("jstree-children")) d++;
+                    p = p.parentElement;
+                    if (p && p.classList && p.classList.contains("jstree-container-ul")) break;
+                }
+                return d;
+            }
+
+            function decorateTwisty(node) {
+                // node가 그려진 다음 anchor 내부에 twisty를 삽입
+                const li = $tree.jstree(true).get_node(node, true); // DOM
+                if (!li || !li.length) return;
+
+                const liEl = li[0];
+                const a = liEl.querySelector("a.jstree-anchor");
+                if (!a) return;
+
+                // 중복 삽입 방지
+                if (a.querySelector(".twisty")) return;
+
+                const depth = getDepthFromLi(liEl);
+
+                // 1~2 depth만 화살표 추가 (요구사항)
+                if (depth > 2) return;
+
+                const hasChildren = node.children && node.children.length > 0;
+
+                const twisty = document.createElement("span");
+                twisty.className = "twisty";
+                if (!hasChildren) twisty.classList.add("is-leaf");
+                if (node.state && node.state.opened) twisty.classList.add("is-open");
+
+                // 기존 text(HTML 포함)를 label로 감싸서 구조를 안정화
+                // jsTree가 anchor에 node.text를 innerHTML로 넣어둠
+                const label = document.createElement("span");
+                label.className = "label";
+
+                const textWrap = document.createElement("span");
+                textWrap.className = "text";
+                textWrap.innerHTML = a.innerHTML; // 기존 내용(카운트 span 포함) 유지
+
+                label.appendChild(textWrap);
+
+                // anchor 내용 교체: [twisty][label]
+                a.innerHTML = "";
+                a.appendChild(twisty);
+                a.appendChild(label);
+
+                // twisty 클릭은 "선택" 말고 "토글"만 하게
+                twisty.addEventListener("click", (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    if (hasChildren) $tree.jstree(true).toggle_node(node);
+                });
+            }
+
+            // 트리 준비되면: 전부 닫기 + 1~2 depth 화살표 장식
+            $tree.on("ready.jstree", function () {
+                const inst = $tree.jstree(true);
+
+                inst.close_all(); // ✅ 처음에 전부 접힘
+
+                // 모든 노드에 대해 데코 (렌더된 것만 바로 적용되고, 나머지는 open 시점에 또 적용)
+                inst.get_json("#", { flat: true }).forEach((n) => decorateTwisty(inst.get_node(n.id)));
+            });
+
+            // 노드가 열릴 때/닫힐 때 화살표 회전 애니메이션 클래스 토글
+            $tree.on("open_node.jstree", function (e, data) {
+                const li = data.node && $tree.jstree(true).get_node(data.node, true);
+                if (!li || !li.length) return;
+                const twisty = li[0].querySelector("a .twisty");
+                if (twisty) twisty.classList.add("is-open");
+
+                // 열리면서 새로 렌더되는 하위 노드들도 1~2 depth면 화살표 달아주기
+                data.node.children.forEach((id) => decorateTwisty($tree.jstree(true).get_node(id)));
+            });
+
+            $tree.on("close_node.jstree", function (e, data) {
+                const li = data.node && $tree.jstree(true).get_node(data.node, true);
+                if (!li || !li.length) return;
+                const twisty = li[0].querySelector("a .twisty");
+                if (twisty) twisty.classList.remove("is-open");
+            });
+
+            // ✅ 모든 depth에서 "클릭하면 토글" 되게:
+            // - 자식이 있으면: 단일 클릭으로 열고 닫기
+            // - leaf면: 선택만
+            $tree.on("click", ".jstree-anchor", function (ev) {
+                const inst = $tree.jstree(true);
+                const nodeId = inst.get_node(this).id; // anchor -> node
+                const node = inst.get_node(nodeId);
+
+                const hasChildren = node.children && node.children.length > 0;
+
+                // 카운트 클릭이든 텍스트 클릭이든, 자식 있는 노드는 토글
+                if (hasChildren) {
+                    ev.preventDefault();
+                    inst.toggle_node(node);
+                } else {
+                    // leaf는 기본 선택 유지
+                    inst.deselect_all(true);
+                    inst.select_node(node, true);
+                }
+            });
+
+            // 선택 이벤트(필요하면 여기에 연결)
+            $tree.on("select_node.jstree", function (e, data) {
+                console.log("selected:", data.node.id);
+            });
+        </script>
+    </body>
+</html>

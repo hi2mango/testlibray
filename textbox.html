@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="./slimselect.css" />
+        <script src="./slimselect.min.js"></script>
+        <style>
+            :root {
+                --radius: 12px;
+                --line: #6d6d6d;
+                --text: #1f2430;
+                --muted: #6b7280;
+                --accent: #ff8a00;
+                --hoverBg: #bbc9fe;
+            }
+
+            .field {
+                width: 280px;
+            }
+            .field label {
+                display: block;
+                margin: 6px 0;
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            /* 컨트롤 */
+            .ss-main {
+                border: 1px solid var(--line) !important;
+                border-radius: var(--radius) !important;
+                min-height: 44px !important;
+                box-shadow: none !important;
+            }
+            .ss-main.ss-open-below,
+            .ss-main:focus-within {
+                border-color: var(--accent) !important;
+            }
+
+            /* 드롭다운: 떠 보이게 + radius */
+            .ss-content {
+                border-radius: var(--radius) !important;
+                border: 1px solid var(--line) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+                margin-top: 8px !important;
+                overflow: hidden;
+            }
+
+            /* 옵션 hover */
+            .ss-option {
+                padding: 10px 12px !important;
+            }
+            /* .ss-option:hover,
+    .ss-option.ss-highlighted {
+        background: var(--hoverBg) !important;
+        color: var(--text) !important;
+    } */
+
+            /* 선택된 항목 */
+            .ss-option.ss-selected {
+                color: var(--accent) !important;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="field">
+            <label>box</label>
+            <select id="sel-slim"></select>
+        </div>
+
+        <script>
+            async function fetchOptions() {
+                await new Promise((r) => setTimeout(r, 200));
+                return [
+                    { value: "loveage", text: "LoveAge" },
+                    { value: "alpha", text: "Alpha" },
+                    { value: "beta", text: "Beta" },
+                ];
+            }
+
+            (async () => {
+                const el = document.querySelector("#sel-slim");
+                (await fetchOptions()).forEach((o) => {
+                    const opt = document.createElement("option");
+                    opt.value = o.value;
+                    opt.textContent = o.text;
+                    el.appendChild(opt);
+                });
+
+                const ss = new SlimSelect({
+                    select: "#sel-slim",
+                    settings: { showSearch: false },
+                });
+
+                // ss.setSelected("loveage");
+            })();
+        </script>
+    </body>
+</html>

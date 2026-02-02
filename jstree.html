@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Insurance Tree (jsTree)</title>
+
+        <!-- jsTree (free) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jstree@3.3.12/dist/themes/default/style.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jstree@3.3.12/dist/jstree.min.js"></script>
+
+        <style>
+            :root {
+                --accent: #f07f2a; /* 주황 포인트 */
+                --accent-soft: #fde6d7; /* 선택 배경 */
+                --text: #222;
+                --muted: #666;
+                --row-h: 38px;
+                --indent: 22px;
+            }
+
+            body {
+                font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+                margin: 24px;
+                color: var(--text);
+            }
+
+            /* 상단 주황 라인 */
+            .tree-wrap {
+                width: 520px;
+                border-top: 3px solid var(--accent);
+                padding-top: 10px;
+            }
+
+            /* 기본 jsTree 테마에서 아이콘/점선 제거하고, 여백/행 높이 통일 */
+            #tree.jstree-default .jstree-icon {
+                display: none !important;
+            }
+            #tree.jstree-default .jstree-node {
+                margin-left: 0;
+                min-height: var(--row-h);
+                line-height: var(--row-h);
+                background-image: none !important; /* 점선 제거 */
+            }
+            #tree.jstree-default .jstree-anchor {
+                height: var(--row-h);
+                line-height: var(--row-h);
+                padding: 0 10px 0 6px;
+                border-radius: 6px;
+                width: calc(100% - 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* 들여쓰기(레벨별) */
+            #tree.jstree-default .jstree-children .jstree-node {
+                margin-left: var(--indent);
+            }
+
+            /* 토글(삼각형) 커스터마이즈 */
+            #tree.jstree-default .jstree-ocl {
+                width: 18px;
+                height: var(--row-h);
+                line-height: var(--row-h);
+                background: none !important;
+                position: relative;
+                margin-right: 2px;
+            }
+            /* 닫힘: ▶ */
+            #tree.jstree-default .jstree-closed > .jstree-ocl::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 6px;
+                transform: translateY(-50%);
+                border-style: solid;
+                border-width: 6px 0 6px 8px;
+                border-color: transparent transparent transparent var(--muted);
+            }
+            /* 열림: ▼ */
+            #tree.jstree-default .jstree-open > .jstree-ocl::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 4px;
+                transform: translateY(-45%);
+                border-style: solid;
+                border-width: 8px 6px 0 6px;
+                border-color: var(--muted) transparent transparent transparent;
+            }
+            /* 자식 없는 leaf는 토글 자리만 유지(정렬 깨지지 않게) */
+            #tree.jstree-default .jstree-leaf > .jstree-ocl::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 8px;
+                width: 4px;
+                height: 4px;
+                transform: translateY(-50%);
+                border-radius: 999px;
+                background: transparent; /* 필요하면 점으로 바꿔도 됨 */
+            }
+
+            /* Hover */
+            #tree.jstree-default .jstree-anchor:hover {
+                background: #fff3ec;
+            }
+
+            /* 선택된 row: 연한 주황 배경 + 글자 주황 */
+            #tree.jstree-default .jstree-clicked {
+                background: var(--accent-soft) !important;
+                color: var(--accent) !important;
+                box-shadow: none !important;
+            }
+
+            /* 카운트 (12) 스타일 */
+            .count {
+                color: var(--muted);
+                margin-left: 2px;
+                font-weight: 600;
+            }
+            /* 선택 시 카운트도 살짝 주황 */
+            #tree .jstree-clicked .count {
+                color: var(--accent);
+            }
+
+            /* 접근성: 포커스 링(너무 튀지 않게) */
+            #tree.jstree-default .jstree-anchor:focus {
+                outline: 2px solid rgba(240, 127, 42, 0.35);
+                outline-offset: 2px;
+            }
+            .jstree-default .jstree-wholerow-hovered,
+            .jstree-default .jstree-wholerow-clicked {
+                background: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="tree-wrap">
+            <div id="tree"></div>
+        </div>
+
+        <script>
+            // 디자인과 비슷한 구조로 샘플 데이터 구성
+            // text에 카운트를 span으로 넣어도 되고, data.count로 넣고 렌더에서 합쳐도 됨.
+            const treeData = [
+                {
+                    id: "c1",
+                    text: "청약서발행번호(25120000496)",
+                    state: { opened: true },
+                    children: [
+                        {
+                            id: "c1-1",
+                            text: "보험차익 과세 확인서<span class='count'>(1)</span>",
+                            state: { opened: true },
+                            children: [
+                                { id: "c1-1-1", text: "보험차액 과세 확인서" },
+                                { id: "c1-1-2", text: "보험금 청구서<span class='count'>(12)</span>" },
+                            ],
+                        },
+                        {
+                            id: "c1-2",
+                            text: "보험계약 해지 신청서",
+                            state: { opened: true },
+                            children: [
+                                {
+                                    id: "c1-2-1",
+                                    text: "보험료 납부 확인서<span class='count'>(2)</span>",
+                                    state: { opened: true },
+                                    children: [
+                                        { id: "c1-2-1-1", text: "보험금 지급 명세서" },
+                                        { id: "c1-2-1-2", text: "보험금 지급 명세서" },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            $("#tree").jstree({
+                core: {
+                    data: treeData,
+                    multiple: false,
+                    themes: { dots: false, icons: false },
+                },
+                plugins: ["wholerow"], // row 전체 클릭 가능(디자인이랑 잘 맞음)
+            });
+
+            // 클릭 시 선택된 노드 id/log 등 처리 예시
+            $("#tree").on("select_node.jstree", function (e, data) {
+                const node = data.node;
+                console.log("selected:", node.id, node.text);
+                // 여기서 파일 열기/다운로드/우측 패널 갱신 등 연결하면 됨
+            });
+        </script>
+    </body>
+</html>

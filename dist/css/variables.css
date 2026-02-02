@@ -1,0 +1,142 @@
+@charset "UTF-8";
+
+/* =========================
+   Root Variables
+   ========================= */
+:root {
+    /* Base Colors */
+    --white: #ffffff;
+    --black: #000000;
+    --black-90: #0a0a0a;
+
+    /* Gray Scale */
+    --gray-05: #f5f7fa;
+    --gray-10: #ebeef2;
+    --gray-20: #d6dbe3;
+    --gray-30: #afb6c2;
+    --gray-40: #9098a3;
+    --gray-90: #2f3338;
+
+    /* Orange */
+    --orange-50: #f58220;
+    --orange-60: #eb6e08;
+    --orange-70: #d25b00;
+
+    /* Disabled */
+    --disabled: #6f7784;
+
+    /* Secondary Gray */
+    --secondary_gray01: #555555;
+    --secondary_gray02: #424242;
+    --secondary_gray03: #333333;
+    --secondary_disabled: #d6dbe3;
+
+    /* Tertiary */
+    --tertiary-border: #d6dbe3;
+    --tertiary01: #f5f7fa;
+    --tertiary02: #ebeef2;
+
+    /* Typography */
+    --font-base: "pretendard", sans-serif;
+
+    /* Font Sizes (rem 기준) */
+    --fs-12: 0.75rem; /* 12px */
+    --fs-13: 0.8125rem; /* 13px */
+    --fs-14: 0.875rem; /* 14px */
+    --fs-15: 0.9375rem; /* 15px */
+    --fs-16: 1rem; /* 16px */
+    --fs-18: 1.125rem; /* 18px */
+    --fs-20: 1.25rem; /* 20px */
+    --fs-21: 1.3125rem; /* 21px */
+    --fs-22: 1.375rem; /* 22px */
+    --fs-24: 1.5rem; /* 24px */
+    --fs-28: 1.75rem; /* 28px */
+
+    /* Font Weights */
+    --fw-100: 100;
+    --fw-200: 200;
+    --fw-300: 300;
+    --fw-400: 400; /* normal */
+    --fw-500: 500;
+    --fw-600: 600;
+    --fw-700: 700; /* bold */
+    --fw-800: 800;
+    --fw-900: 900;
+
+    /* Accent */
+    --accent: #f07f2a;
+    --accent-soft: #fde6d7;
+
+    /* Text */
+    --text: #222222;
+    --muted: #666666;
+
+    /* Layout */
+    --row-h: 38px;
+    --indent: 22px;
+}
+
+/* =========================
+   Utility Classes
+   ========================= */
+
+/* Font Size Utilities */
+.fs-12 {
+    font-size: var(--fs-12);
+}
+.fs-14 {
+    font-size: var(--fs-14);
+}
+.fs-15 {
+    font-size: var(--fs-15);
+}
+.fs-16 {
+    font-size: var(--fs-16);
+}
+.fs-18 {
+    font-size: var(--fs-18);
+}
+.fs-20 {
+    font-size: var(--fs-20);
+}
+.fs-21 {
+    font-size: var(--fs-21);
+}
+.fs-22 {
+    font-size: var(--fs-22);
+}
+.fs-24 {
+    font-size: var(--fs-24);
+}
+.fs-28 {
+    font-size: var(--fs-28);
+}
+
+/* Font Weight Utilities */
+.fw-100 {
+    font-weight: var(--fw-100);
+}
+.fw-200 {
+    font-weight: var(--fw-200);
+}
+.fw-300 {
+    font-weight: var(--fw-300);
+}
+.fw-400 {
+    font-weight: var(--fw-400);
+}
+.fw-500 {
+    font-weight: var(--fw-500);
+}
+.fw-600 {
+    font-weight: var(--fw-600);
+}
+.fw-700 {
+    font-weight: var(--fw-700);
+}
+.fw-800 {
+    font-weight: var(--fw-800);
+}
+.fw-900 {
+    font-weight: var(--fw-900);
+}

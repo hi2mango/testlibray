@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Tabulator Demo</title>
+        <link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet" />
+        <script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+    </head>
+    <body>
+        <h2>📋 사용자 목록 테이블</h2>
+        <div id="example-table"></div>
+
+        <script>
+            const tableData = [
+                { id: 1, name: "홍길동", age: 25, gender: "남자" },
+                { id: 2, name: "김영희", age: 30, gender: "여자" },
+                { id: 3, name: "박철수", age: 28, gender: "남자" },
+            ];
+
+            const table = new Tabulator("#example-table", {
+                height: "300px",
+                layout: "fitColumns", //fitColumn :테이블 폭 맞춰서 자동 분배
+                data: tableData, //테이블에 뿌릴 row데이터
+                columns: [
+                    {
+                        // 🟢 특정 컬럼
+                        field: "__sel__",
+                        formatter: "rowSelection",
+                        cellClick: function (e, cell) {
+                            e.stopPropagation(); // ⭐ 필수
+                            cell.getRow().toggleSelect();
+                        },
+                    },
+                    { title: "ID", field: "id", width: 50 },
+                    { title: "이름", field: "name" },
+                    { title: "나이", field: "age", hozAlign: "center" },
+                    { title: "성별", field: "gender" },
+                ],
+
+                // 🔵 테이블 전체
+                rowClick: function (e, row) {
+                    alert("?");
+                    row.toggleSelect();
+                },
+
+                rowSelected: function (row) {
+                    alert("??");
+                    console.log("selected:", row.getData());
+                },
+                rowDeselected: function (row) {
+                    console.log("deselected:", row.getData());
+                },
+            });
+
+            //subscribe to event
+            table.on("dataLoaded", function (data) {
+                console.log("data: ", data);
+                //data has been loaded
+            });
+            table.on("rowClick", function (e, row) {
+                const test = row.getData();
+                console.log("test: ", test);
+                //e - the click event object
+                //row - row component
+            });
+        </script>
+    </body>
+</html>

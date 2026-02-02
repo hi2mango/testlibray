@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Tabulator UI Sample (v4)</title>
+
+        <!-- Tabulator (MIT) -->
+        <!-- <link rel="stylesheet" href="https://unpkg.com/tabulator-tables@5.6.1/dist/css/tabulator.min.css" /> -->
+        <!-- <script src="https://unpkg.com/tabulator-tables@5.6.1/dist/js/tabulator.min.js"></script> -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script> -->
+        <link rel="stylesheet" href="./dist/css/tabulator.min.css" />
+        <script src="./dist/js/tabulator.min.js"></script>
+
+        <style>
+            :root {
+                --accent: #f58220;
+                --line: #e7e9ef;
+                --head: #f3f5f9;
+                --text: #1f2430;
+                --muted: #6b7280;
+                --select: #f6e9df;
+                --danger: #e11d48;
+                --bg: #ffffff;
+
+                /* recognize table col widths */
+                --recColTwisty: 60px;
+                --recColResult: 140px;
+
+                /* sub grid theme */
+                --subHead: #f6f7fb;
+                --subLine: #ececf4;
+                --subRow: #ffffff;
+                --subAlt: #fafbff;
+                --subSelect: #eaf2ff;
+                --subAccent: #2563eb;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                padding: 18px;
+                font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+                color: var(--text);
+                background: #fff;
+            }
+
+            .page {
+                max-width: 900px;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .card {
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                background: var(--bg);
+                overflow: hidden;
+            }
+
+            .card-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 14px 10px 14px;
+                border-bottom: 2px solid var(--accent);
+            }
+            .title {
+                font-weight: 900;
+                font-size: 20px;
+                color: var(--accent);
+                letter-spacing: -0.2px;
+            }
+
+            .select {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 8px 10px;
+                min-width: 180px;
+            }
+            .select label {
+                font-size: 13px;
+                color: var(--muted);
+            }
+            .select select {
+                border: none;
+                outline: none;
+                background: transparent;
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text);
+                width: 100%;
+            }
+
+            /* ---------- Tabs ---------- */
+            .tabs {
+                display: flex;
+                gap: 18px;
+                padding: 14px 14px 0 14px;
+            }
+            .tab {
+                position: relative;
+                font-weight: 900;
+                color: #111827;
+                padding: 8px 2px;
+                cursor: pointer;
+                user-select: none;
+            }
+            .tab.active::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -1px;
+                height: 3px;
+                background: var(--accent);
+                border-radius: 999px;
+            }
+            .tab-panels {
+                padding: 10px 14px 14px 14px;
+            }
+            .panel {
+                display: none;
+            }
+            .panel.active {
+                display: block;
+            }
+
+            /* ---------- Main Tabulator theme ---------- */
+            .tabulator {
+                border: 1px solid var(--line) !important;
+                border-radius: 12px;
+                overflow: hidden;
+                background: #fff;
+            }
+            .tabulator .tabulator-header {
+                background: var(--head) !important;
+                border-bottom: 1px solid var(--line) !important;
+            }
+            .tabulator .tabulator-col {
+                background: var(--head) !important;
+                border-right: none !important;
+            }
+            .tabulator .tabulator-col .tabulator-col-content {
+                padding: 10px 12px !important;
+            }
+            .tabulator .tabulator-col-title {
+                font-weight: 900;
+                color: #111827;
+                font-size: 14px;
+            }
+            .tabulator-row {
+                border-bottom: 1px solid var(--line) !important;
+            }
+            .tabulator-row .tabulator-cell {
+                padding: 12px 12px !important;
+                border-right: none !important;
+                font-size: 14px;
+                cursor: grab; /* main = drag 느낌 */
+            }
+            .tabulator-row.tabulator-row-moving .tabulator-cell {
+                cursor: grabbing;
+            }
+            .tabulator-row.tabulator-selected {
+                background: var(--select) !important;
+            }
+
+            /* Checkbox */
+            .cb {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                border: 2px solid #cfd6e3;
+                border-radius: 6px;
+                background: #fff;
+                cursor: pointer;
+                transition: 120ms;
+                user-select: none;
+                margin: auto;
+            }
+            .cb.on {
+                border-color: var(--accent);
+                background: var(--accent);
+            }
+            .cb svg {
+                width: 14px;
+                height: 14px;
+                fill: #fff;
+                display: none;
+            }
+            .cb.on svg {
+                display: block;
+            }
+
+            .badge-fix {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                color: var(--accent);
+                margin-top: 2px;
+            }
+
+            /* ---------- Recognize section ---------- */
+            .section-head {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 14px;
+            }
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--accent);
+            }
+            .section-title {
+                font-size: 26px;
+                font-weight: 950;
+                letter-spacing: -0.4px;
+            }
+            .accordion-wrap {
+                padding: 0 14px 14px 14px;
+            }
+
+            .twisty {
+                display: inline-flex;
+                width: 22px;
+                height: 22px;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+                border: 1px solid var(--line);
+                background: #fff;
+            }
+            .twisty svg {
+                width: 14px;
+                height: 14px;
+                transition: 160ms;
+                transform: rotate(0deg);
+            }
+            .twisty.open svg {
+                transform: rotate(90deg);
+            }
+
+            .miss {
+                color: var(--danger);
+                font-weight: 950;
+            }
+
+            /* Detail layout: do not enter result column */
+            .detail-grid {
+                display: grid;
+                grid-template-columns: var(--recColTwisty) 1fr var(--recColResult);
+                column-gap: 0;
+                padding: 10px 0 10px 0;
+            }
+            .detail-spacer {
+            }
+            .detail-mid {
+                padding-left: 28px;
+                padding-right: 12px;
+            }
+
+            .subgrid-card {
+                position: relative;
+                border: 1px solid var(--subLine);
+                border-radius: 12px;
+                overflow: hidden;
+                background: #fff;
+                box-shadow: 0 8px 18px rgba(17, 24, 39, 0.06);
+            }
+
+            /* resizer handle */
+            .subgrid-resizer {
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                width: 18px;
+                height: 18px;
+                border-radius: 6px;
+                background: rgba(17, 24, 39, 0.06);
+                border: 1px solid rgba(17, 24, 39, 0.1);
+                cursor: ns-resize;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                user-select: none;
+                z-index: 10;
+            }
+            .subgrid-resizer::before {
+                content: "";
+                width: 10px;
+                height: 10px;
+                background: linear-gradient(135deg, transparent 6px, rgba(17, 24, 39, 0.25) 6px, rgba(17, 24, 39, 0.25) 7px, transparent 7px), linear-gradient(135deg, transparent 2px, rgba(17, 24, 39, 0.25) 2px, rgba(17, 24, 39, 0.25) 3px, transparent 3px);
+            }
+
+            /* Sub grid theme */
+            .subgrid-card .tabulator {
+                border: none !important;
+                border-radius: 0 !important;
+            }
+            .subgrid-card .tabulator .tabulator-header {
+                background: var(--subHead) !important;
+                border-bottom: 1px solid var(--subLine) !important;
+            }
+            .subgrid-card .tabulator .tabulator-col {
+                background: var(--subHead) !important;
+            }
+            .subgrid-card .tabulator .tabulator-col-title {
+                font-size: 13px;
+                font-weight: 950;
+                letter-spacing: -0.1px;
+                color: #0f172a;
+            }
+            .subgrid-card .tabulator-row {
+                border-bottom: 1px solid var(--subLine) !important;
+                background: var(--subRow) !important;
+            }
+            .subgrid-card .tabulator-row:nth-child(even) {
+                background: var(--subAlt) !important;
+            }
+            .subgrid-card .tabulator-row.tabulator-selected {
+                background: var(--subSelect) !important;
+            }
+
+            /* ✅ sub grid: NO drag affordance */
+            .subgrid-card .tabulator-row .tabulator-cell {
+                padding: 10px 12px !important;
+                font-size: 13px;
+                cursor: default !important; /* drag 느낌 제거 */
+            }
+
+            .subgrid-card .cb.on {
+                border-color: var(--subAccent);
+                background: var(--subAccent);
+            }
+
+            /* scrollbar */
+            .tabulator-tableHolder::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+            }
+            .tabulator-tableHolder::-webkit-scrollbar-thumb {
+                background: #cfd6e3;
+                border-radius: 999px;
+                border: 2px solid #f7f8fb;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="page">
+            <!-- 1) 스캔 목록 -->
+            <section class="card">
+                <div class="card-head">
+                    <div class="title">스캔 목록</div>
+                    <div class="select">
+                        <label>정렬</label>
+                        <select>
+                            <option>페이지번호순</option>
+                            <option>스캔일시순</option>
+                            <option>문서명순</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="padding: 14px">
+                    <div id="gridScan"></div>
+                </div>
+            </section>
+
+            <!-- 2) 탭 2개 그리드 -->
+            <section class="card">
+                <div class="tabs">
+                    <div class="tab active" data-tab="doc">문서목록</div>
+                    <div class="tab" data-tab="fav">즐겨찾기</div>
+                </div>
+                <div class="tab-panels">
+                    <div class="panel active" id="panel-doc">
+                        <div id="gridDoc"></div>
+                    </div>
+                    <div class="panel" id="panel-fav">
+                        <div id="gridFav"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3) 인식항목 -->
+            <section class="card">
+                <div class="section-head">
+                    <div class="dot"></div>
+                    <div class="section-title">인식항목</div>
+                </div>
+                <div class="accordion-wrap">
+                    <div id="gridRecognize"></div>
+                </div>
+            </section>
+        </div>
+
+        <script>
+            // Checkbox formatter
+            function checkboxFormatter(cell) {
+                const v = !!cell.getValue();
+                const wrap = document.createElement("div");
+                wrap.className = "cb" + (v ? " on" : "");
+                wrap.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9.2 16.6 4.9 12.3l1.4-1.4 2.9 2.9 8.4-8.4 1.4 1.4z"></path>
+      </svg>
+    `;
+                wrap.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    cell.setValue(!cell.getValue(), true);
+                });
+                return wrap;
+            }
+
+            // 1) 스캔 목록
+            const scanData = Array.from({ length: 12 }).map((_, i) => ({
+                id: i + 1,
+                checked: i === 0,
+                no: i + 1,
+                name: "보험자의 과세 확인서",
+                date: "2025.12.31",
+                status: "보완",
+            }));
+
+            new Tabulator("#gridScan", {
+                height: 420,
+                layout: "fitColumns",
+                selectable: true,
+                movableRows: true,
+                movableColumns: true,
+                data: scanData,
+                index: "id",
+                columns: [
+                    { title: "", field: "checked", hozAlign: "center", width: 60, headerSort: false, formatter: checkboxFormatter },
+                    { title: "No", field: "no", width: 80, hozAlign: "center", headerSort: false },
+                    { title: "문서명", field: "name", headerSort: false },
+                    {
+                        title: "스캔일시",
+                        field: "date",
+                        width: 160,
+                        headerSort: false,
+                        formatter: (cell) => {
+                            const d = cell.getValue();
+                            const s = cell.getRow().getData().status;
+                            return `<div style="font-weight:900;">${d}</div><div class="badge-fix">${s}</div>`;
+                        },
+                    },
+                ],
+                rowClick: (e, row) => row.toggleSelect(),
+            });
+
+            // 2) 탭 그리드
+            const docRows = Array.from({ length: 11 }).map((_, i) => ({
+                id: i + 1,
+                no: i + 1,
+                name: "보험자의 과세 확인서",
+            }));
+
+            function makeSimpleGrid(el) {
+                return new Tabulator(el, {
+                    height: 420,
+                    layout: "fitColumns",
+                    selectable: 1,
+                    movableRows: true,
+                    movableColumns: true,
+                    data: docRows.map((x) => ({ ...x })),
+                    columns: [
+                        { title: "No", field: "no", width: 90, hozAlign: "center", headerSort: false },
+                        { title: "문서명", field: "name", headerSort: false },
+                    ],
+                    rowClick: (e, row) => row.select(),
+                });
+            }
+            makeSimpleGrid("#gridDoc");
+            makeSimpleGrid("#gridFav");
+
+            document.querySelectorAll(".tab").forEach((t) => {
+                t.addEventListener("click", () => {
+                    document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
+                    t.classList.add("active");
+                    const key = t.dataset.tab;
+                    document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+                    document.querySelector("#panel-" + key).classList.add("active");
+                });
+            });
+
+            // 3) 인식항목
+            const recognizeData = [
+                {
+                    id: 1,
+                    open: true,
+                    field: "1. 개인(신용 정보)의 수집 이용에 관한...",
+                    result: "",
+                    items: [
+                        { id: "1-1", checked: false, name: "항목명" },
+                        { id: "1-2", checked: false, name: "미동의" },
+                        { id: "1-3", checked: true, name: "동의" },
+                    ],
+                },
+                {
+                    id: 2,
+                    open: false,
+                    field: "2. 개인(신용)정보의 제공에 관한 사항",
+                    result: "",
+                    items: [
+                        { id: "2-1", checked: false, name: "제공기관" },
+                        { id: "2-2", checked: false, name: "제공목적" },
+                        { id: "2-3", checked: false, name: "보유기간" },
+                    ],
+                },
+                {
+                    id: 3,
+                    open: false,
+                    field: "3. 예금주 성명/서명",
+                    result: "누락",
+                    miss: true,
+                    items: [
+                        { id: "3-1", checked: false, name: "예금주 성명" },
+                        { id: "3-2", checked: false, name: "서명" },
+                    ],
+                },
+            ];
+
+            const subTables = new Map(); // parentId -> {table, container}
+
+            function twistyFormatter(cell) {
+                const row = cell.getRow();
+                const isOpen = !!row.getData().open;
+
+                const wrap = document.createElement("span");
+                wrap.className = "twisty" + (isOpen ? " open" : "");
+                wrap.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 6l6 6-6 6" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
+                wrap.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    row.update({ open: !row.getData().open });
+                    row.reformat();
+                    row.normalizeHeight();
+                });
+                return wrap;
+            }
+
+            function attachResizer(resizerEl, subContainerEl, parentId) {
+                let startY = 0;
+                let startH = 0;
+
+                const onMove = (e) => {
+                    const y = e.touches ? e.touches[0].clientY : e.clientY;
+                    const dy = y - startY;
+                    const next = Math.max(120, Math.min(520, startH + dy));
+                    subContainerEl.style.height = next + "px";
+                    const entry = subTables.get(parentId);
+                    if (entry?.table) entry.table.redraw(true);
+                };
+                const onUp = () => {
+                    window.removeEventListener("mousemove", onMove);
+                    window.removeEventListener("mouseup", onUp);
+                    window.removeEventListener("touchmove", onMove);
+                    window.removeEventListener("touchend", onUp);
+                };
+                const onDown = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    startY = e.touches ? e.touches[0].clientY : e.clientY;
+                    startH = subContainerEl.getBoundingClientRect().height;
+
+                    window.addEventListener("mousemove", onMove);
+                    window.addEventListener("mouseup", onUp);
+                    window.addEventListener("touchmove", onMove, { passive: false });
+                    window.addEventListener("touchend", onUp);
+                };
+
+                resizerEl.addEventListener("mousedown", onDown);
+                resizerEl.addEventListener("touchstart", onDown, { passive: false });
+            }
+
+            new Tabulator("#gridRecognize", {
+                height: 520,
+                layout: "fitColumns",
+                data: recognizeData,
+                index: "id",
+                movableRows: true, // ✅ 부모(메인)만 드래그 가능
+                movableColumns: true,
+                columns: [
+                    { title: "", field: "open", width: 60, hozAlign: "center", headerSort: false, formatter: twistyFormatter },
+                    {
+                        title: "필드명",
+                        field: "field",
+                        headerSort: false,
+                        formatter: (cell) => {
+                            const d = cell.getRow().getData();
+                            const style = d.miss ? "color:var(--danger); font-weight:950;" : "font-weight:900;";
+                            return `<span style="${style}">${cell.getValue()}</span>`;
+                        },
+                    },
+                    {
+                        title: "검증결과",
+                        field: "result",
+                        width: 140,
+                        headerSort: false,
+                        hozAlign: "center",
+                        formatter: (cell) => {
+                            const v = cell.getValue();
+                            if (!v) return "";
+                            return `<span class="miss">${v}</span>`;
+                        },
+                    },
+                ],
+                rowFormatter: (row) => {
+                    const data = row.getData();
+                    const rowEl = row.getElement();
+
+                    const old = rowEl.querySelector(".detail-grid");
+                    if (old) old.remove();
+                    subTables.delete(data.id);
+
+                    if (!data.open) return;
+
+                    const detail = document.createElement("div");
+                    detail.className = "detail-grid";
+                    detail.innerHTML = `
+        <div class="detail-spacer"></div>
+        <div class="detail-mid">
+          <div class="subgrid-card">
+            <div class="subgrid" id="sub_${data.id}" style="height:180px;"></div>
+            <div class="subgrid-resizer" title="높이 조절"></div>
+          </div>
+        </div>
+        <div class="detail-spacer"></div>
+      `;
+                    rowEl.appendChild(detail);
+
+                    const subRoot = detail.querySelector("#sub_" + data.id);
+
+                    // ✅ 자식 테이블: 드래그/드롭 OFF (movableRows / movableColumns 미설정)
+                    const subTable = new Tabulator(subRoot, {
+                        layout: "fitColumns",
+                        height: "100%",
+                        index: "id",
+                        selectable: true,
+                        data: (data.items || []).map((x) => ({ ...x })),
+                        columns: [
+                            { title: "", field: "checked", width: 60, hozAlign: "center", headerSort: false, formatter: checkboxFormatter },
+                            { title: "항목명", field: "name", headerSort: false },
+                        ],
+                        rowClick: (e, r) => r.toggleSelect(),
+                    });
+
+                    subTables.set(data.id, { table: subTable, container: subRoot });
+
+                    const resizer = detail.querySelector(".subgrid-resizer");
+                    attachResizer(resizer, subRoot, data.id);
+                },
+                rowClick: (e, row) => {
+                    row.update({ open: !row.getData().open });
+                    row.reformat();
+                    row.normalizeHeight();
+                },
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>이미지 교정</title>
+
+        <link rel="icon" href="data:," />
+
+        <link rel="stylesheet" href="./dist/themes/default/style.min.css" />
+        <link rel="stylesheet" href="./dist/lib/tabulator.min.css" />
+        <link rel="stylesheet" href="./dist/lib/jstree.min.css" />
+        <link rel="stylesheet" href="./dist/lib/choices.min.css" />
+        <link rel="stylesheet" href="./dist/css/common.css" />
+        <link rel="stylesheet" href="./dist/css/main.css" />
+    </head>
+
+    <script src="./dist/lib/jquery-3.7.1.min.js"></script>
+    <script src="./dist/lib/jstree.min.js"></script>
+    <script src="./dist/lib/tabulator.min.js"></script>
+    <script src="./dist/lib/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dragscroll@0.0.8/dragscroll.js"></script>
+
+    <script src="./recog_box.js"></script>
+    <script src="./dist/js/common.js"></script>
+
+    <body>
+        <div class="app">
+            <div class="container imgCorr">
+                <!-- 좌측 뷰어 -->
+                <div class="viewer-section"></div>
+
+                <!-- 우측 데이터 -->
+                <div class="biz-section">
+                    <!-- 상단 테이블 -->
+                    <div class="table-section" style="height: 300px">
+                        <div class="tabs dragscroll">
+                            <button class="tab active">건정보 관리</button>
+                            <button class="tab">탭2</button>
+                            <button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button><button class="tab">탭3</button>
+                            <button class="tab">탭4</button>
+                            <button class="tab">탭5</button>
+                            <button class="tab">탭6</button>
+                            <button class="tab">탭7</button>
+                        </div>
+
+                        <!-- Tabulator -->
+                        <div class="table-container">
+                            <div id="myGrid" style="height: 100%; width: 100%"></div>
+                        </div>
+
+                        <div class="btn-wrap">
+                            <div class="btn-list">
+                                <button class="btn btn-secondary">인식상태 확인</button>
+                                <button class="btn btn-secondary">새로고침</button>
+                                <button class="btn btn-secondary">파일첨부</button>
+                                <button class="btn btn-secondary">교정대상 제외</button>
+                                <button class="btn btn-secondary">스캔 업무 변경</button>
+                                <button class="btn btn-secondary">GA 업무 변경</button>
+                                <button class="btn btn-secondary">전송상태</button>
+                            </div>
+
+                            <div class="btn-list">
+                                <button class="btn btn-secondary">건 복사</button>
+                                <button class="btn btn-secondary">건 병합</button>
+                                <button class="btn btn-secondary">건 삭제</button>
+                                <button class="btn btn-primary">전송</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 하단 3개 패널 -->
+                    <div class="bottom-section">
+                        <!-- 좌측 -->
+                        <div class="panel-left" style="width: 320px">
+                            <!-- 1. 건정보 관리 -->
+                            <div class="panel gunTable" style="height: 300px">
+                                <div class="panel-header">
+                                    <p class="tit">
+                                        <span>건정보 관리</span>
+                                    </p>
+                                </div>
+
+                                <div class="panel-content">
+                                    <div class="form-group">
+                                        <!-- 위 -->
+                                        <div class="form-row">
+                                            <div class="select-row">
+                                                <div></div>
+                                                <label for="stamp">업무</label>
+                                                <div class="select-wrap upmu" style="display: flex">
+                                                    <select id="stamp">
+                                                        <option value="LOVEAGE">LOVEAGE</option>
+                                                    </select>
+
+                                                    <select id="other" style="width: 150px">
+                                                        <option value="test1">추가고지(보장제안신청서)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="select-row" style="width: 226px">
+                                                <select id="other2">
+                                                    <option value="test1">추가고지(보장제안신청서)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 아래 -->
+                                        <div class="form-group_gun" style="background-color: #cfcfcf">
+                                            <div class="input-group">
+                                                <label for="numm">청약서 번호</label>
+                                                <input id="numm" type="text" placeholder="그룹" style="width: 150px" />
+                                            </div>
+
+                                            <div>
+                                                <input type="text" placeholder="그룹" style="width: 150px" />
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-primary btn-sm" id="saveGun">건 정보 저장</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. 인식목록 -->
+                            <div class="panel recog-wrap">
+                                <div class="panel-header">
+                                    <p class="tit">
+                                        <span>인식목록</span>
+                                    </p>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="recogGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 중간 패널 - 이미지 목록 -->
+                        <div class="panel imgList-wrap" style="flex: 1">
+                            <div class="panel-header">
+                                <p class="tit">
+                                    <span>이미지목록</span>
+                                </p>
+                            </div>
+
+                            <div class="panel-content">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px">
+                                    <div style="display: flex; gap: 8px">
+                                        <div class="form-chk">
+                                            <input type="checkbox" id="unClassified" />
+                                            <label for="unClassified">미분류</label>
+                                        </div>
+                                        <div class="form-chk">
+                                            <input type="checkbox" id="notification" />
+                                            <label for="notification">알림의무페이지 PASS</label>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm">단체 개별청약서번호 등록</button>
+                                </div>
+
+                                <div class="table-container">
+                                    <div id="imgsGrid"></div>
+                                </div>
+
+                                <div class="side-bottom spaceBetween">
+                                    <div class="align">
+                                        <button class="btn btn-secondary btn-sm">건 분리</button>
+                                        <button class="btn btn-secondary btn-sm">문서복사</button>
+                                        <button class="btn btn-secondary btn-sm">삭제</button>
+                                    </div>
+
+                                    <div class="sequence-wrap list">
+                                        <div class="order-control">
+                                            <button class="btn btn-sm btn-icon first" title="맨위"></button>
+                                            <button class="btn btn-sm btn-icon pre" title="위"></button>
+                                            <button class="btn btn-sm btn-icon next" title="아래"></button>
+                                            <button class="btn btn-sm btn-icon last" title="맨아래"></button>
+                                        </div>
+                                        <button class="btn btn-secondary btn-sm">순서변경 저장</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 우측 패널 - 문서목록 -->
+                        <div class="panel docList-wrap" style="width: 320px">
+                            <div class="panel-header">
+                                <p class="tit">
+                                    <span>문서목록</span>
+                                </p>
+                            </div>
+
+                            <div class="panel-content">
+                                <div class="table-section">
+                                    <div class="tabs">
+                                        <button class="tab-s active">건정보 관리</button>
+                                        <button class="tab-s">탭2</button>
+                                    </div>
+
+                                    <div class="table-container" style="border: 1px solid #fdd">
+                                        <!-- 문서목록 탭 화면 -->
+                                        <div class="docList">
+                                            <div class="search-bar">
+                                                <input type="text" class="search-input" placeholder="입력" />
+                                                <button class="btn btn-secondary btn-icon search" title="검색"></button>
+                                                <button class="btn btn-secondary btn-sm">즐겨찾기 추가</button>
+                                            </div>
+
+                                            <ul class="doc-tree">
+                                                <li class="doc-tree-item">
+                                                    <button class="toggle-btn"></button>
+                                                    <span>청약서류</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1C8 보험계약 청약서(단체)_202404</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1C7 보험계약 청약서(부활)_202404</span>
+                                                </li>
+
+                                                <li class="doc-tree-item selected">
+                                                    <button class="toggle-btn"></button>
+                                                    <span style="color: #ff6b33">계약서류</span>
+                                                </li>
+
+                                                <li class="doc-tree-item">
+                                                    <button class="toggle-btn"></button>
+                                                    <span>공통서류</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1F8 신분증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 주민등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1G0 사업자등록증</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1D8 인감증명서</span>
+                                                </li>
+
+                                                <li class="doc-tree-item" style="padding-left: 20px">
+                                                    <input type="checkbox" class="checkbox" style="margin-right: 4px" />
+                                                    <span>N1E8 통장사본</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- 즐겨찾기 탭 화면 -->
+                                        <div class="bookmarkList" style="display: none">
+                                            <div class="search-bar">
+                                                <input type="text" class="search-input" placeholder="입력" />
+                                                <button class="btn btn-secondary btn-icon search" title="검색"></button>
+                                                <button class="btn btn-secondary btn-sm">즐겨찾기 추가</button>
+                                            </div>
+                                            <div id="bookMarkGrid" style="height: 100%; width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /bottom-section -->
+                </div>
+                <!-- /biz-section -->
+            </div>
+            <!-- /container -->
+        </div>
+        <!-- /app -->
+
+        <script>
+            $(function () {
+                // ---------------------------
+                // 탭 스위칭
+                // ---------------------------
+                $(".tabs").on("click", ".tab", function () {
+                    $(".tabs .tab").removeClass("active");
+                    $(this).addClass("active");
+                });
+
+                // ---------------------------
+                // 아이콘토글
+                // ---------------------------
+                $(".toggle-item").on("click", function () {
+                    const $toggle = $("#iconToggle");
+                    const value = $(this).data("value");
+                    console.log("value: ", value);
+
+                    if (value == "singleView") {
+                        $toggle.removeClass("right-active");
+                    } else {
+                        $toggle.addClass("right-active");
+                    }
+                });
+
+                // ---------------------------
+                // 토글
+                // ---------------------------
+                $("#commentToggle").on("change", function () {
+                    const isOn = $(this).is(":checked");
+
+                    if (isOn) {
+                        console.log("주석 보기 ON");
+                        // 주석 표시 로직
+                    } else {
+                        console.log("주석 보기 OFF");
+                        // 주석 숨김 로직
+                    }
+                });
+
+                // ---------------------------
+                // stamp
+                // ---------------------------
+                const stampOpts = [
+                    { value: "test1", label: "문구테스트입니다." },
+                    { value: "test2", label: "문구문구테스트입니다." },
+                    { value: "test3", label: "문구문구문구테스트입니다." },
+                ];
+
+                const stampEl = document.querySelector("#stamp");
+                if (stampEl) {
+                    stampOpts.forEach((o) => {
+                        const opt = document.createElement("option");
+                        opt.value = o.value;
+                        opt.textContent = o.label;
+                        stampEl.appendChild(opt);
+                    });
+
+                    const stampSelectbox = new Choices(stampEl, {
+                        searchEnabled: false,
+                        shouldSort: false,
+                        itemSelectText: "",
+                    });
+                }
+
+                new Choices("#other", {
+                    searchEnabled: false,
+                    shouldSort: false,
+                    itemSelectText: "",
+                });
+                new Choices("#other2", {
+                    searchEnabled: false,
+                    shouldSort: false,
+                    itemSelectText: "",
+                });
+                // ---------------------------
+                // Tabulator: 건정보 관리
+                // ---------------------------
+                const mainRows = [
+                    // 스샷에 데이터가 접혀있어서 샘플만 넣어둠 (원본 데이터로 교체해서 쓰면 됨)
+                    { No: "1", 등록일시: "2025.11.10 11:22:33", 등록구분: "ATT", 페이지수: "1", 건조회: "확인", 문서미분류: "없음", 업무구분: "개인신계약", 청약서번호: "20251218001", 증권번호: "", 구분: "", 지점명: "", 인식상태: "", "신규/보완": "", 등록지점코드: "" },
+                ];
+
+                const mainTable = new Tabulator("#myGrid", {
+                    data: mainRows,
+                    layout: "fitColumns",
+                    height: "100%",
+                    width: "100%",
+
+                    selectable: true, // 다중 선택
+                    selectableRangeMode: "click", // 클릭 시부터 드래그로 다중 선택
+                    columnDefaults: { resizable: true, headerSort: false },
+                    // headerSort false -> 헤더 클릭해도 정렬 안 됨
+
+                    columns: [
+                        {
+                            width: 32,
+                            minWidth: 32,
+                            hozAlign: "center",
+                            headerHozAlign: "center",
+                            headerSort: false,
+                            frozen: true,
+                            formatter: "rowSelection", // formatter -> 각 행 체크박스
+                            titleFormatter: "rowSelection", // titleFormatter -> 헤더 전체 선택 체크박스
+                            titleFormatterParams: { rowRange: "active" },
+                            cellClick: function (e, cell) {
+                                e.stopPropagation();
+                                cell.getRow().toggleSelect();
+                                const row = cell.getRow(); // RowComponent
+                                const data = row.getData(); // 해당 row 데이터
+                                const value = cell.getValue(); // 해당 cell 값
+                            },
+                        },
+                        { title: "No", width: 36, minWidth: 36, field: "No", hozAlign: "center" },
+                        { title: "등록일시", field: "등록일시", minWidth: 150, hozAlign: "center" },
+                        { title: "등록구분", width: 64, minWidth: 64, field: "등록구분", hozAlign: "center" },
+                        { title: "페이지 수", width: 72, minWidth: 72, field: "페이지수", hozAlign: "center" },
+                        { title: "건 조회", field: "건조회", hozAlign: "center" },
+                        { title: "문서미분류", field: "문서미분류", hozAlign: "center" },
+                        { title: "업무구분", field: "업무구분", hozAlign: "center" },
+                        { title: "청약서번호", field: "청약서번호", hozAlign: "center" },
+                        { title: "증권번호", field: "증권번호", hozAlign: "center" },
+                        { title: "구분", width: 64, minWidth: 64, field: "구분", hozAlign: "center" },
+                        { title: "지점명", width: 72, minWidth: 72, field: "지점명", hozAlign: "center" },
+                        { title: "인식상태", field: "인식상태", hozAlign: "center" },
+                        { title: "신규/보완", field: "신규/보완", hozAlign: "center" },
+                        { title: "등록지점코드", field: "등록지점코드", hozAlign: "center" },
+                    ],
+
+                    rowFormatter: function (row) {
+                        const index = row.getPosition(true); // 실제 순서 기준
+                        if (index % 2 === 1) {
+                            row.getElement().classList.add("row-odd");
+                        }
+                    },
+                });
+
+                // subscribe to event
+                mainTable.on("dataLoaded", function (data) {
+                    console.log("data: ", data);
+                    // data has been loaded
+                });
+
+                mainTable.on("rowClick", function (e, row) {
+                    const test = row.getData();
+                    console.log("test: ", test);
+                    // e - the click event object
+                    // row - row component
+                });
+
+                mainTable.on("rowSelected", function (row) {
+                    const data = row.getData();
+                    // checked 됐을때만
+                    console.log("checked: ", data);
+                });
+
+                mainTable.on("rowSelectionChanged", function (data, rows) {
+                    const selectedCount = rows.length;
+                    const totalCount = mainTable.getDataCount("active"); // 필터/검색 반영된 현재 표시 row 기준
+
+                    if (totalCount > 0 && selectedCount === totalCount) {
+                        // 전체 선택 됐을때만
+                        alert("전체선택");
+                    }
+                });
+
+                // 2) 탭 그리드
+                const docRows = Array.from({ length: 31 }).map((_, i) => ({
+                    id: i + 1,
+                    no: i + 1,
+                    name: "보험자의 과세 확인서",
+                }));
+                new Tabulator("#imgsGrid", {
+                    // height: 420,
+                    height: "100%",
+                    layout: "fitColumns",
+                    selectable: 1,
+                    movableRows: true,
+                    movableColumns: true,
+                    data: docRows.map((x) => ({ ...x })),
+                    columns: [
+                        { title: "No", field: "no", width: 90, hozAlign: "center", headerSort: false },
+                        { title: "문서명", field: "name", headerSort: false },
+                    ],
+                    rowClick: (e, row) => row.select(),
+                });
+
+                //popup
+
+                // ✅ 열기 버튼
+                $("#saveGun").on("click", function () {
+                    $dlg.dialog("open");
+                });
+            });
+        </script>
+    </body>
+</html>

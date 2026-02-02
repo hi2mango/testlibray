@@ -1,0 +1,658 @@
+@import url("./reset.css");
+@import url("./variables.css");
+@import url("./pretendard.css");
+
+/* COOMON*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "pretendard", "Noto Sans KR", sans-serif !important;
+}
+
+button,
+select {
+    border: none;
+}
+
+/***************************** [FORM] *****************************/
+input {
+    font-size: var(--fs-16);
+    background-color: transparent;
+}
+
+input::placeholder {
+    color: var(--gray-05, #b5b8c3);
+    text-align: right;
+    font-size: var(--fs-16);
+    font-weight: var(--fw-600);
+}
+
+/*
+input:checked[type="radio"] {
+    background-image: url("../assets/icon/radio.svg");
+    background-color: transparent;
+    border-color: transparent;
+}
+*/
+
+input[type="text"] {
+    padding: 6px 8px;
+    border: 1px solid var(--gray-20);
+    border-radius: 4px;
+    font-weight: var(--fw-400);
+    font-size: 12px;
+}
+
+input[type="text"]:focus {
+}
+
+input[type="text"]::placeholder {
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: none;
+    /* background: url("") no-repeat center/contain; */
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    /* background: url("") no-repeat center/contain; */
+}
+
+input[type="radio"] {
+}
+
+input[type="radio"]:checked {
+}
+
+label {
+    color: #000;
+    font-size: var(--fs-18);
+    font-weight: var(--fw-600);
+}
+
+.select-box {
+    position: relative;
+    height: 32px;
+}
+
+.select-row {
+    display: flex;
+    align-items: center;
+}
+
+.select-row label {
+    margin-right: 4px;
+    color: var(--gray-90);
+    font-size: var(--fs-14);
+    font-weight: var(--fw-400);
+    line-height: 150%;
+}
+
+.select-row .select-wrap {
+    flex: 1;
+}
+
+.select-wrap {
+    height: 32px;
+}
+
+.select-row + button,
+.select-wrap + button {
+    margin-left: 4px;
+}
+
+.select-box,
+.select-row,
+.select-wrap {
+    overflow: visible !important;
+    transform: none !important;
+}
+
+.form-chk {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+label.chk {
+    display: flex;
+    align-items: center;
+    height: 18px;
+}
+
+.form-chk input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #d6dbe3;
+    background-color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.form-chk input[type="checkbox"]:checked {
+    background-color: var(--orange-50);
+    border-color: var(--orange-50);
+}
+
+.form-chk input + label {
+    font-size: 12px;
+    color: #1e2024;
+    font-weight: var(--fw-400);
+    line-height: 150%;
+}
+
+/***************************** [BUTTON] *****************************/
+.btn-list {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    /* min-width: 62px; */
+    padding: 5.5px 8px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: var(--fs-14);
+    font-weight: var(--fw-400);
+    line-height: 150%;
+    cursor: pointer;
+}
+
+.btn-sm {
+    height: 24px !important;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    color: var(--white);
+    background-color: var(--orange-50);
+}
+
+.btn-primary:hover {
+    background-color: var(--orange-60);
+}
+
+.btn-primary:active {
+    background-color: var(--orange-70);
+}
+
+.btn-primary:disabled {
+    color: var(--disabled);
+    background-color: var(--gray-20);
+}
+
+.btn-secondary {
+    color: var(--white);
+    background-color: var(--secondary_gray01);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary_gray02);
+}
+
+.btn-secondary:active {
+    background-color: var(--secondary_gray03);
+}
+
+.btn-secondary:disabled {
+    color: var(--disabled);
+    background-color: var(--secondary_disabled);
+}
+
+.btn-tertiary {
+    min-width: 0;
+    background-color: #fff;
+    border: 1px solid #d6dbe3;
+}
+
+.btn-tertiary:hover {
+    background-color: var(--tertiary01);
+}
+
+.btn-tertiary:active {
+    background-color: var(--tertiary02);
+}
+
+.btn-tertiary:disabled {
+    border: 1px solid #afb6c2;
+    color: var(--disabled);
+    background-color: #d6dbe3;
+}
+
+/* only icon */
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 6px;
+    background-color: var(--white);
+    border: 1px solid var(--gray-20);
+    color: var(--gray-90);
+    box-sizing: border-box;
+}
+
+.btn-icon:hover {
+    background-color: var(--tertiary01);
+}
+
+.btn-icon:active {
+    background-color: var(--tertiary02);
+}
+
+.btn-icon:disabled {
+    border: 1px solid #afb6c2;
+    color: var(--disabled);
+    background-color: #d6dbe3;
+}
+
+.btn-icon::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    mask-image: url("../images/icon/pin.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    background-color: #2f3338;
+}
+
+.iconText::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+    mask-image: url("../images/icon/pin.svg");
+    mask-size: contain;
+    background-color: #2f3338;
+}
+
+.btn-secondary.iconText::before {
+    background-color: #ffffff;
+}
+
+.setting::before {
+    mask-image: url("../images/icon/setting.svg");
+}
+
+.chgDoc::before {
+    mask-image: url("../images/icon/certification_simple.svg");
+}
+
+.copyFile::before {
+    mask-image: url("../images/icon/copy.svg");
+}
+
+.addFile::before {
+    mask-image: url("../images/icon/plus.svg");
+}
+
+.deleteFile::before {
+    mask-image: url("../images/icon/trash.svg");
+}
+
+.refresh::before,
+.repair::before {
+    mask-image: url("../images/icon/reset.svg");
+}
+
+.bookmark-off::before {
+    mask-image: url("../images/icon/scrap.svg");
+}
+
+/***************************** [TOGGLE BUTTON] *****************************/
+/* 토글 */
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    height: 100%;
+    user-select: none;
+    padding: 6px; /* 터치 영역 확보 */
+    box-sizing: border-box;
+}
+
+.toggle-label {
+    font-size: 13px;
+    color: #222;
+}
+
+/* checkbox 숨김 */
+.toggle input {
+    display: none;
+}
+
+/* 슬라이더 */
+.toggle-slider {
+    position: relative;
+    width: 27px;
+    height: 15px;
+    background: #c9cdd4;
+    border-radius: 999px;
+    transition: background 0.2s ease;
+}
+
+/* 원 */
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    width: 11px;
+    height: 11px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* ON */
+.toggle input:checked + .toggle-slider {
+    background: var(--orange-50);
+}
+
+.toggle input:checked + .toggle-slider::before {
+    transform: translate(10px, -50%);
+}
+
+/* 키보드 포커스 */
+.toggle input:focus + .toggle-slider {
+    box-shadow: 0 0 0 2px rgba(245, 130, 32, 0.35);
+}
+
+/***************************** [BOX 레이아웃] *****************************/
+/* 부모 공통: 세로 정렬 레이아웃 */
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: var(--h, auto); /* 필요하면 부모에서만 override */
+    min-height: var(--min-h, auto); /* 필요할 때만 사용 */
+}
+
+/* 기본 자식: 유동 영역 */
+.layout > * {
+    flex: 1 1 auto;
+}
+
+/* 고정 영역 */
+.layout > .fixed {
+    flex: 0 0 auto;
+    height: var(--fixed-h, auto);
+}
+
+/* 스크롤 필요하면 이 클래스만 추가 */
+.scroll-y {
+    overflow-y: auto;
+}
+
+.align {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.list {
+    display: flex;
+}
+
+.spaceBetween {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/***************************** [라이브러리] *****************************/
+/* ===== SELECTBOX choices ===== */
+.choices[data-type*="select-one"] {
+    width: 100%;
+}
+.choices[data-type*="select-one"],
+.choices[data-type*="select-one"] .choices__inner {
+    height: 100%;
+}
+
+/* 컨트롤 */
+.choices__inner {
+    border-radius: 4px !important;
+    border: 1px solid #d6dbe3 !important;
+    min-height: 24px !important;
+    padding: 0 8px !important;
+    background: #fff !important;
+}
+
+.choices__list--single {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 4px 16px 4px 4px !important;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-400);
+    text-wrap: nowrap;
+    box-sizing: border-box;
+}
+
+/* active (열렸거나 포커스) */
+.choices.is-open .choices__inner,
+.choices.is-focused .choices__inner {
+    border-color: var(--orange-50) !important;
+}
+
+.choices__list--dropdown .choices__item,
+.choices__list[aria-expanded] .choices__item {
+    font-size: var(--fs-12);
+}
+
+/* 드롭다운 떠 보이게 + radius */
+.choices__list--dropdown {
+    border-radius: 4px !important;
+    border: 1px solid #febef2 !important;
+    box-shadow:
+        0 0 2px 0 rgba(0, 0, 0, 0.08),
+        0 4px 8px 0 rgba(0, 0, 0, 0.1) !important;
+    margin-top: 8px !important;
+    overflow: hidden;
+}
+
+/* ==============================
+   SELECTBOX choices (추가)
+============================== */
+.choices__list--dropdown {
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.choices__list--dropdown .choices__item--selectable {
+    padding: 10px 12px !important;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background: #f5f7fa !important;
+    border-radius: 4px;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-selected {
+    color: var(--orange-50) !important;
+    font-weight: var(--fw-500);
+}
+
+.choices__item--selectable[aria-selected="true"] {
+    color: var(--gray-90) !important;
+    font-weight: var(--fw-400);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* dropdown arrow */
+.choices[data-type*="select-one"]::after {
+    border: none !important;
+    mask-image: url("../images/ic_btn_dropdown.svg");
+    mask-size: contain;
+    width: 12px;
+    height: 12px;
+    background: #1e2124;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.2s ease;
+}
+
+.choices[data-type*="select-one"].is-open::after {
+    transform: translateY(-50%) rotate(-180deg);
+}
+
+/* ==============================
+   jsTree (추가)
+============================== */
+#tree.jstree-default .jstree-icon {
+    display: none !important;
+}
+
+#tree.jstree-default .jstree-node {
+    margin-left: 0;
+    min-height: 24px;
+    line-height: 24px;
+    background-image: none !important;
+}
+
+#tree.jstree-default .jstree-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 25px;
+    width: 100%;
+    padding: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: var(--fw-400);
+    box-sizing: border-box;
+}
+
+/* depth padding */
+.jstree-default a[aria-level="2"].jstree-anchor {
+    padding-left: 22px !important;
+}
+.jstree-default a[aria-level="3"].jstree-anchor {
+    padding-left: 44px !important;
+}
+.jstree-default a[aria-level="4"].jstree-anchor {
+    padding-left: 66px !important;
+}
+
+/* hover & selected */
+#tree.jstree-default .jstree-anchor:hover {
+    background: #fff3ec;
+}
+
+#tree.jstree-default .jstree-clicked {
+    background: #fcede3 !important;
+    color: var(--orange-50) !important;
+}
+
+/* ==============================
+   Tabulator (추가)
+============================== */
+.tabulator {
+    border: 1px solid #e0e0db;
+    background: #fff;
+    overflow: hidden;
+}
+
+.tabulator .tabulator-header {
+    background-color: #ededed;
+    border-bottom: 1px solid #e0e0db;
+}
+
+.tabulator .tabulator-header .tabulator-col {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    background-color: #ededed;
+    border-right: 1px solid #e0e0db;
+}
+
+.tabulator .tabulator-row .tabulator-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    border-bottom: 1px solid #e0e0db;
+}
+
+.tabulator .tabulator-row:hover {
+    background-color: #fcede3;
+    cursor: pointer;
+}
+
+.tabulator .tabulator-row.tabulator-row-even {
+    background-color: #f5f7fa !important;
+}
+
+/* ==============================
+   POPUP
+============================== */
+
+/* dialog.css */
+.ui-dialog .ui-dialog-content {
+    padding: 0;
+}
+/* dialog 기본 패딩 제거 (너가 만든 디자인이 꽉 차게) */
+.ui-dialog .ui-dialog-content {
+    padding: 0;
+    overflow: hidden; /* 내부 스크롤은 너의 list-items 같은 곳에서 관리 */
+}
+
+/* dialog 타이틀바 스타일은 필요하면 여기에 */
+.ui-dialog .ui-dialog-titlebar {
+    cursor: move; /* 드래그 느낌 확실하게 */
+}
+
+/* dialog 내부 레이아웃: 상단(컨텐츠) + 하단(action-bar) */
+#downloadPopup {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+/* 너 컨텐츠가 남은 높이를 먹도록 */
+#downloadPopup .popup-container.container {
+    flex: 1;
+    min-height: 0; /* 이거 없으면 내부 스크롤/높이 계산 꼬일 때 많음 */
+    padding: 24px;
+    overflow-y: scroll;
+}
+
+/* action-bar는 아래 고정 */
+#downloadPopup .action-bar {
+    flex: 0 0 auto;
+}

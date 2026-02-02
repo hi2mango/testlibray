@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>이미지 처리 프로그램</title>
+
+        <link rel="stylesheet" href="../dist/css/common.css" />
+        <link rel="stylesheet" href="styles.css" />
+
+        <!-- jQuery + jQuery UI -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
+        <!-- dialog 전용 보정 CSS (아래 2번 참고) -->
+        <link rel="stylesheet" href="dialog.css" />
+    </head>
+
+    <body>
+        <!-- ✅ dialog로 띄울 컨텐츠는 body에 숨겨놓고 -->
+        <div id="downloadPopup" style="display: none">
+            <div class="popup-container container">
+                <!-- 왼쪽 패널 -->
+                <div class="left-panel">
+                    <!-- 페이지 옵션 섹션 -->
+                    <section class="option-section">
+                        <h3 class="section-title">
+                            <span class="bullet"></span>
+                            페이지 옵션
+                        </h3>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="page-option" value="all" />
+                                <span class="radio-text">전체 페이지</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="page-option" value="current" />
+                                <span class="radio-text">현재 페이지</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="page-option" value="selected" checked />
+                                <span class="radio-text">선택 페이지</span>
+                                <span class="radio-description">이미지 목록에서 체크하세요</span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- 다운로드 옵션 섹션 -->
+                    <section class="option-section">
+                        <h3 class="section-title">
+                            <span class="bullet"></span>
+                            다운로드 옵션
+                        </h3>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="download-option" value="pdf" />
+                                <span class="radio-text">PDF</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="download-option" value="tiff" />
+                                <span class="radio-text">TIFF</span>
+                                <span class="radio-description">묶음 이미지로 저장</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="download-option" value="jpeg" checked />
+                                <span class="radio-text">JPEG</span>
+                                <span class="radio-description">개별 이미지로 저장</span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- 추가 옵션 섹션 -->
+                    <section class="option-section">
+                        <h3 class="section-title">
+                            <span class="bullet"></span>
+                            추가 옵션
+                        </h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="additional-option" value="stamp" />
+                                <span class="checkbox-text">주석포함</span>
+                            </label>
+                        </div>
+                        <button class="action-button secondary" type="button">마스킹 추가</button>
+                    </section>
+                </div>
+
+                <!-- 오른쪽 패널 (이미지 뷰어) -->
+
+                <!-- 이미지 목록 섹션 -->
+                <div style="display: flex">
+                    <section class="image-list-section">
+                        <h3 class="section-title">
+                            <span class="bullet"></span>
+                            이미지 목록
+                        </h3>
+                        <div class="list-header">
+                            <input type="checkbox" id="select-all" class="list-checkbox" />
+                            <span class="list-no">No</span>
+                            <span class="list-name">문서명</span>
+                        </div>
+                        <div class="list-items" id="imageList">
+                            <!-- 동적으로 생성될 목록 아이템들 -->
+                        </div>
+
+                        <div class="pagination">
+                            <button class="pagination-btn" id="firstPage" type="button">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" />
+                                    <path d="M6 4V12" stroke="currentColor" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="pagination-btn" id="prevPage" type="button">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="pagination-btn" id="nextPage" type="button">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="pagination-btn" id="lastPage" type="button">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" />
+                                    <path d="M10 4V12" stroke="currentColor" stroke-width="2" />
+                                </svg>
+                            </button>
+                        </div>
+                    </section>
+                    <section class="right-panel">
+                        <h3 class="section-title">
+                            <span class="bullet"></span>
+                            이미지 목록
+                        </h3>
+                        <div class="viewer-container"></div>
+                    </section>
+                </div>
+                <!-- ✅ dialog 내부 하단 액션 버튼(너 디자인 유지) -->
+                <div class="action-bar">
+                    <button class="action-button primary" id="btnDownload" type="button">다운로드</button>
+                    <button class="action-button primary" id="btnPrint" type="button">인쇄</button>
+                    <button class="action-button dark" id="btnClose" type="button">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 예: 팝업 열기 버튼 -->
+        <button id="openPopup" type="button">팝업 열기</button>
+
+        <script src="dialog.js"></script>
+        <script src="script.js"></script>
+
+        <script>
+            // dialog.js
+            $(function () {
+                const $dlg = $("#downloadPopup");
+
+                // ✅ dialog 생성
+                $dlg.dialog({
+                    autoOpen: false,
+                    modal: true, // 모달(뒤 클릭 방지) 원하면 true, 아니면 false
+                    width: 774,
+                    height: 816,
+                    resizable: true,
+                    draggable: true,
+
+                    // 내부 스크롤은 우리가 컨트롤하니까 dialog 자체 스크롤은 막는 편이 깔끔
+                    create: function () {
+                        // content 영역 높이 꽉차게 쓰려고 클래스 붙여도 됨
+                        $(this).closest(".ui-dialog").addClass("download-dialog");
+                    },
+
+                    // 리사이즈할 때 내부 레이아웃 깨지는 거 방지
+                    resize: function () {
+                        // 필요하면 여기서 grid 재계산/스크롤 영역 조정 가능
+                    },
+
+                    // 닫힐 때 정리
+                    close: function () {
+                        // 예: 체크박스 초기화 같은 거 하고 싶으면 여기서
+                        // $("#select-all").prop("checked", false);
+                    },
+                });
+
+                // ✅ 열기 버튼
+                $("#openPopup").on("click", function () {
+                    $dlg.dialog("open");
+                });
+
+                // ✅ 하단 버튼들
+                $("#btnClose").on("click", function () {
+                    $dlg.dialog("close");
+                });
+
+                $("#btnDownload").on("click", function () {
+                    // TODO: 다운로드 로직 연결
+                    alert("다운로드 로직 연결!");
+                });
+
+                $("#btnPrint").on("click", function () {
+                    // TODO: 인쇄 로직 연결
+                    alert("인쇄 로직 연결!");
+                });
+            });
+        </script>
+    </body>
+</html>
