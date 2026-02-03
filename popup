@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>팝업 디자인 컴포넌트</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --orange: #E8712A;
+  --orange-hover: #d4611f;
+  --beige-bg: #FDF3EC;
+  --beige-border: #F0DDD0;
+  --row-alt: #FDF3EC;
+  --header-bg: #F5F5F5;
+  --border: #E0E0E0;
+  --text-dark: #2C2C2C;
+  --text-mid: #555;
+  --text-light: #999;
+  --white: #FFFFFF;
+  --gray-btn: #555555;
+  --gray-btn-hover: #444;
+  --error-red: #E53935;
+  --error-bg: #FFEBEE;
+  --info-blue: #4A90D9;
+  --info-bg: #E3F2FD;
+  --font: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-dark);
+  background: #eee;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 40px 20px;
+}
+
+/* ═══════════════════════════════════════════
+   LAUNCHER (개발용 테스트 패널)
+   ═══════════════════════════════════════════ */
+.launcher {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #1a1a2e;
+  padding: 10px 18px;
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.launcher span {
+  color: #aaa; font-size: 12px; margin-right: 6px; font-weight: 600; letter-spacing: .5px;
+}
+.launcher button {
+  background: #16213e;
+  color: #e0e0e0;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background .15s, border-color .15s;
+}
+.launcher button:hover { background: #0f3460; border-color: #e94560; color: #fff; }
+
+/* ═══════════════════════════════════════════
+   OVERLAY (모달 백드롭)
+   ═══════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.40);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .18s ease;
+}
+.modal-overlay.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ═══════════════════════════════════════════
+   MODAL SHELL (공통 모달 프레임)
+   ═══════════════════════════════════════════ */
+.modal {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 8px 36px rgba(0,0,0,0.20);
+  padding: 28px 30px 24px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp .22s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   SECTION TITLE (● 제목)
+   ═══════════════════════════════════════════ */
+.section-title {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.section-title .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+}
+.section-title span {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH BOX (베이지 검색 영역)
+   ═══════════════════════════════════════════ */
+.search-box {
+  background: var(--beige-bg);
+  border: 1px solid var(--beige-border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.search-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.search-row:last-child { margin-bottom: 0; }
+.search-label {
+  font-size: 13px;
+  color: var(--text-mid);
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   INPUT
+   ═══════════════════════════════════════════ */
+.inp {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-dark);
+  background: var(--white);
+  outline: none;
+  transition: border-color .15s;
+}
+.inp:focus { border-color: var(--orange); }
+.inp::placeholder { color: var(--text-light); }
+
+/* ═══════════════════════════════════════════
+   SELECT
+   ═══════════════════════════════════════════ */
+.sel {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 30px 7px 10px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-dark);
+  background: var(--white);
+  appearance: auto;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.sel:focus { border-color: var(--orange); }
+
+/* ═══════════════════════════════════════════
+   DATE INPUT (📅 아이콘 포함)
+   ═══════════════════════════════════════════ */
+.date-wrap { position: relative; display: inline-block; }
+.date-wrap .inp { padding-right: 28px; }
+.date-wrap .cal-icon {
+  position: absolute; right: 8px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 15px;
+  pointer-events: none;
+}
+.date-sep { color: var(--text-light); font-size: 14px; padding: 0 2px; }
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+.btn-orange {
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 9px 30px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.btn-orange:hover { background: var(--orange-hover); }
+
+.btn-gray {
+  background: var(--gray-btn);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-gray:hover { background: var(--gray-btn-hover); }
+
+.btn-outline {
+  background: var(--white);
+  color: var(--text-dark);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-outline:hover { background: #f5f5f5; }
+
+.btn-dark-icon {
+  background: var(--gray-btn);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.btn-dark-icon:hover { background: var(--gray-btn-hover); }
+
+/* ═══════════════════════════════════════════
+   BUTTON ROW (중앙 정렬 버튼 영역)
+   ═══════════════════════════════════════════ */
+.btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+/* ═══════════════════════════════════════════
+   DATA TABLE (공통 테이블)
+   ═══════════════════════════════════════════ */
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  table-layout: fixed;
+}
+table.data-table thead th {
+  background: var(--header-bg);
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-mid);
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+table.data-table tbody td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+table.data-table tbody tr:nth-child(3n) {
+  background: var(--row-alt);
+}
+table.data-table tbody tr:not(:nth-child(3n)) {
+  background: var(--white);
+}
+/* 스크롤바 스타일 */
+.table-wrap::-webkit-scrollbar { height: 6px; }
+.table-wrap::-webkit-scrollbar-track { background: #f1f1f1; }
+.table-wrap::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   ALERT POPUP (정보/오류 알림)
+   ═══════════════════════════════════════════ */
+.alert-icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 26px;
+  font-weight: 700;
+}
+.alert-icon-wrap.info { background: var(--info-bg); color: var(--info-blue); }
+.alert-icon-wrap.error { background: var(--error-bg); color: var(--error-red); }
+
+.alert-message {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dark);
+  line-height: 1.7;
+  max-width: 340px;
+  margin: 0 auto 22px;
+}
+
+/* ═══════════════════════════════════════════
+   각 모달 개별 폴기 크기
+   ═══════════════════════════════════════════ */
+.modal--sm  { width: 360px; }
+.modal--md  { width: 460px; }
+.modal--lg  { width: 780px; }
+.modal--xl  { width: 960px; }
+
+/* ═══════════════════════════════════════════
+   반응형 조정
+   ═══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .modal--sm, .modal--md, .modal--lg, .modal--xl {
+    width: 95vw !important;
+  }
+  .search-row { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     LAUNCHER 패널
+     ═══════════════════════════════════════════ -->
+<div class="launcher">
+  <span>▶ 팝업 목록</span>
+  <button onclick="openModal('modal-업무선택')">① 업무선택</button>
+  <button onclick="openModal('modal-교정-info')">② 교정 (안내)</button>
+  <button onclick="openModal('modal-교정-error')">③ 교정 (오류)</button>
+  <button onclick="openModal('modal-인식확인')">④ 인식상태 확인</button>
+  <button onclick="openModal('modal-접수번호')">⑤ 접수번호 검색</button>
+  <button onclick="openModal('modal-전송리스트')">⑥ 전송완료 리스트</button>
+  <button onclick="openAll()">⬚ 모두 열기</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ① 업무선택 팝업
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-업무선택">
+  <div class="modal modal--md">
+    <div class="section-title">
+      <span class="dot"></span><span>업무선택</span>
+    </div>
+    <div class="search-box">
+      <div class="search-row">
+        <select class="sel" style="width:180px;">
+          <option>요금</option>
+          <option>기타</option>
+        </select>
+        <select class="sel" style="width:180px;">
+          <option>자동대출</option>
+          <option>기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-gray" onclick="closeModal('modal-업무선택')">확인</button>
+      <button class="btn-outline" onclick="closeModal('modal-업무선택')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ② 교정 – 안내 팝업 (문서 리스트를 선택해 주세요)
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-교정-info">
+  <div class="modal modal--sm" style="max-width:320px; padding-top:32px;">
+    <div class="alert-icon-wrap info">!</div>
+    <p class="alert-message">문서 리스트를 선택해 주세요.</p>
+    <div class="btn-row" style="margin-top:4px;">
+      <button class="btn-gray" onclick="closeModal('modal-교정-info')">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ③ 교정 – 오류 팝업 (자동인식 실패)
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-교정-error">
+  <div class="modal modal--md" style="max-width:480px; padding-top:32px;">
+    <div class="alert-icon-wrap error">✕</div>
+    <p class="alert-message">
+      자동인식을 통해 추출된 업무키로 기간계 정보 조회 및 건 정보 저장을 실패하였습니다.<br>
+      NLE0152. 청약서발행건이 없습니다. 영수증번호를 확인하십시오.
+    </p>
+    <div class="btn-row" style="margin-top:4px;">
+      <button class="btn-gray" onclick="closeModal('modal-교정-error')">확인</button>
+      <button class="btn-outline" onclick="closeModal('modal-교정-error')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ④ 인식상태 확인 팝업
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-인식확인">
+  <div class="modal modal--xl">
+    <!-- 인식상태 확인 영역 -->
+    <div class="section-title">
+      <span class="dot"></span><span>인식상태 확인</span>
+    </div>
+    <div class="search-box" style="display:flex; align-items:center; gap:12px;">
+      <label class="search-label">사원번호</label>
+      <input type="text" class="inp" value="P0005920" style="width:200px;" />
+      <div style="margin-left:auto;">
+        <button class="btn-dark-icon">↻ 새로고침</button>
+      </div>
+    </div>
+
+    <!-- 스캔리스트 테이블 -->
+    <div class="section-title">
+      <span class="dot"></span><span>스캔리스트</span>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <colgroup>
+          <col style="width:50px">
+          <col style="width:100px">
+          <col style="width:140px">
+          <col style="width:140px">
+          <col style="width:140px">
+          <col style="width:110px">
+          <col style="width:100px">
+          <col style="width:100px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>No</th><th>업무</th><th>상세업무</th><th>인식상태</th>
+            <th>스캔일시</th><th>등록구분</th><th>페이지 수</th><th>신규/보안</th>
+          </tr>
+        </thead>
+        <tbody id="scan-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ⑤ 접수번호 검색 팝업
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-접수번호">
+  <div class="modal modal--xl">
+    <!-- 검색항목 -->
+    <div class="section-title">
+      <span class="dot"></span><span>검색항목</span>
+    </div>
+    <div class="search-box" style="display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap;">
+      <div style="flex:1; min-width:260px;">
+        <!-- row 1 -->
+        <div class="search-row">
+          <label class="search-label">접수번호</label>
+          <input type="text" class="inp" style="width:160px;" />
+          <label class="search-label" style="margin-left:14px;">접수일자</label>
+          <div class="date-wrap">
+            <input type="text" class="inp" placeholder="YYYY-MM-DD" style="width:140px;" />
+            <span class="cal-icon">📅</span>
+          </div>
+          <span class="date-sep">-</span>
+          <div class="date-wrap">
+            <input type="text" class="inp" placeholder="YYYY-MM-DD" style="width:140px;" />
+            <span class="cal-icon">📅</span>
+          </div>
+        </div>
+        <!-- row 2 -->
+        <div class="search-row">
+          <label class="search-label">주민번호</label>
+          <input type="text" class="inp" style="width:160px;" />
+          <label class="search-label" style="margin-left:14px;">작업구분</label>
+          <select class="sel" style="width:140px;"><option>전체</option></select>
+          <label class="search-label" style="margin-left:14px;">사고자</label>
+          <input type="text" class="inp" style="width:140px;" />
+          <label class="search-label" style="margin-left:14px;">접수창구</label>
+          <input type="text" class="inp" style="width:140px;" />
+        </div>
+      </div>
+      <button class="btn-orange" style="align-self:stretch; padding:0 28px; min-height:56px;">검색</button>
+    </div>
+
+    <!-- 접수번호 리스트 -->
+    <div class="section-title">
+      <span class="dot"></span><span>접수번호 리스트</span>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <colgroup>
+          <col style="width:46px">
+          <col style="width:110px">
+          <col style="width:100px">
+          <col style="width:140px">
+          <col style="width:100px">
+          <col style="width:110px">
+          <col style="width:150px">
+          <col style="width:100px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>No</th><th>접수번호</th><th>접수창구</th><th>주민번호</th>
+            <th>사고자</th><th>접수일자</th><th>실사상태코드명</th><th>작업구분</th>
+          </tr>
+        </thead>
+        <tbody id="접수-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-outline" onclick="closeModal('modal-접수번호')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ⑥ 전송완료 리스트 팝업
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-전송리스트">
+  <div class="modal modal--xl">
+    <!-- 검색항목 -->
+    <div class="section-title">
+      <span class="dot"></span><span>검색항목</span>
+    </div>
+    <div class="search-box" style="display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap;">
+      <div style="flex:1; min-width:260px;">
+        <!-- row 1 -->
+        <div class="search-row">
+          <select class="sel" style="width:120px;">
+            <option>1차 심사자</option>
+            <option>2차 심사자</option>
+          </select>
+          <input type="text" class="inp" value="P0005920" style="width:180px;" />
+
+          <select class="sel" style="width:90px; margin-left:30px;">
+            <option>전체</option>
+          </select>
+          <input type="text" class="inp" value="P0005920" style="width:180px;" />
+        </div>
+        <!-- row 2 -->
+        <div class="search-row">
+          <label class="search-label">자동/수동</label>
+          <select class="sel" style="width:180px;"><option>전체</option></select>
+          <label class="search-label" style="margin-left:30px;">조회기간</label>
+          <div class="date-wrap">
+            <input type="text" class="inp" placeholder="YYYY-MM-DD" style="width:140px;" />
+            <span class="cal-icon">📅</span>
+          </div>
+          <span class="date-sep">-</span>
+          <div class="date-wrap">
+            <input type="text" class="inp" placeholder="YYYY-MM-DD" style="width:140px;" />
+            <span class="cal-icon">📅</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-orange" style="align-self:stretch; padding:0 28px; min-height:56px;">조회</button>
+    </div>
+
+    <!-- 전송완료 리스트 -->
+    <div class="section-title">
+      <span class="dot"></span><span>전송완료 리스트</span>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <colgroup>
+          <col style="width:44px">
+          <col style="width:120px">
+          <col style="width:100px">
+          <col style="width:80px">
+          <col style="width:90px">
+          <col style="width:120px">
+          <col style="width:90px">
+          <col style="width:90px">
+          <col style="width:90px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>No</th><th>전송일시</th><th>등록구분</th><th>페이지 수</th>
+            <th>신규/보안</th><th>청약서 번호</th><th>지사코드</th><th>지사명</th><th>자동/수동</th>
+          </tr>
+        </thead>
+        <tbody id="전송-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-outline" onclick="closeModal('modal-전송리스트')">닫기</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════ -->
+<script>
+$(document).ready(function () {
+
+  /* ─── 테이블 행 생성 헬퍼 ─── */
+  function buildRows(colCount, rowCount) {
+    let html = '';
+    for (let i = 1; i <= rowCount; i++) {
+      html += '<tr><td>' + i + '</td>';
+      for (let c = 1; c < colCount; c++) html += '<td></td>';
+      html += '</tr>';
+    }
+    return html;
+  }
+
+  // 각 테이블 초기화
+  $('#scan-tbody').html(buildRows(8, 11));
+  $('#접수-tbody').html(buildRows(8, 11));
+  $('#전송-tbody').html(buildRows(9, 11));
+
+  /* ─── 모달 열기 ─── */
+  window.openModal = function (id) {
+    $('#' + id).addClass('active');
+  };
+
+  /* ─── 모달 닫기 ─── */
+  window.closeModal = function (id) {
+    $('#' + id).removeClass('active');
+  };
+
+  /* ─── 백드롭 클릭으로 닫기 ─── */
+  $('.modal-overlay').on('click', function (e) {
+    if ($(e.target).is('.modal-overlay')) {
+      $(this).removeClass('active');
+    }
+  });
+
+  /* ─── 모두 열기 (테스트용) ─── */
+  window.openAll = function () {
+    $('.modal-overlay').addClass('active');
+  };
+
+});
+</script>
+</body>
+</html>
